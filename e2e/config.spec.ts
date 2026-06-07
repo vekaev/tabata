@@ -7,9 +7,18 @@ test.describe('tabata config', () => {
     await expect(page.getByTestId('workSec')).toHaveValue('20')
     await expect(page.getByTestId('restSec')).toHaveValue('10')
     await expect(page.getByTestId('sets')).toHaveValue('1')
-    await expect(page.getByTestId('restBetweenSetsSec')).toHaveValue('60')
     await expect(page.getByTestId('prepareSec')).toHaveValue('10')
     await expect(page.getByTestId('total')).toHaveText('Total 04:00')
+    // Rest-between-sets is hidden with a single set.
+    await expect(page.getByTestId('restBetweenSetsSec')).toHaveCount(0)
+  })
+
+  test('rest-between-sets only appears with multiple sets', async ({ page }) => {
+    await page.goto('/tabata')
+    await expect(page.getByTestId('restBetweenSetsSec')).toHaveCount(0)
+    await page.getByRole('button', { name: 'Increase Sets' }).click()
+    await expect(page.getByTestId('sets')).toHaveValue('2')
+    await expect(page.getByTestId('restBetweenSetsSec')).toBeVisible()
   })
 
   test('total updates live as fields change', async ({ page }) => {

@@ -43,6 +43,8 @@ export const Route = createFileRoute('/tabata')({
 type NumericKey = Exclude<keyof TabataConfig, 'id' | 'name' | 'roundNames'>
 
 // Seconds nudge by 5 (the natural HIIT granularity); counts nudge by 1.
+// Order fills the 2-column grid row by row: Rounds | Sets, Work | Rest,
+// Prepare | Cooldown. "Rest between sets" only appears when sets > 1.
 const FIELDS: {
   key: NumericKey
   labelKey: Parameters<TFunction>[0]
@@ -50,14 +52,15 @@ const FIELDS: {
   min: number
   max: number
   step: number
+  onlyMultiSet?: boolean
 }[] = [
-  { key: 'rounds', labelKey: 'for', unitKey: 'rounds', min: 1, max: 99, step: 1 },
+  { key: 'rounds', labelKey: 'rounds', unitKey: null, min: 1, max: 99, step: 1 },
+  { key: 'sets', labelKey: 'sets', unitKey: null, min: 1, max: 99, step: 1 },
   { key: 'workSec', labelKey: 'work', unitKey: 'seconds', min: 1, max: 3600, step: 5 },
   { key: 'restSec', labelKey: 'rest', unitKey: 'seconds', min: 0, max: 3600, step: 5 },
-  { key: 'sets', labelKey: 'sets', unitKey: null, min: 1, max: 99, step: 1 },
-  { key: 'restBetweenSetsSec', labelKey: 'setRest', unitKey: 'seconds', min: 0, max: 3600, step: 5 },
   { key: 'prepareSec', labelKey: 'prepare', unitKey: 'seconds', min: 0, max: 60, step: 5 },
   { key: 'cooldownSec', labelKey: 'cooldown', unitKey: 'seconds', min: 0, max: 3600, step: 5 },
+  { key: 'restBetweenSetsSec', labelKey: 'setRest', unitKey: 'seconds', min: 0, max: 3600, step: 5, onlyMultiSet: true },
 ]
 
 function Chip({
@@ -238,10 +241,15 @@ function TabataConfigScreen() {
 
         <div className="grid w-full grid-cols-1 gap-x-14 gap-y-3.5 sm:grid-cols-2">
           {FIELDS.map((field) => {
+            // "Rest between sets" is meaningless with a single set — hide it.
+            if (field.onlyMultiSet && config.sets <= 1) return null
             const label = t(field.labelKey)
             const unit = field.unitKey ? t(field.unitKey) : ''
             return (
-              <div className="flex items-center justify-between gap-3" key={field.key}>
+              <div
+                className={`flex items-center justify-between gap-3 ${field.onlyMultiSet ? 'sm:col-span-2' : ''}`}
+                key={field.key}
+              >
                 <span className="min-w-0 truncate text-left font-display text-[1.05rem] uppercase tracking-[0.08em] text-fg-secondary">
                   {label}
                   {unit && <span className="ml-1.5 text-fg-tertiary">{unit}</span>}

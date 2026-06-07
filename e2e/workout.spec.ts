@@ -49,7 +49,7 @@ test.describe('workout timer', () => {
     await page.clock.runFor(5100)
     const phase = page.getByTestId('phase-label')
     await expect(phase).toHaveAttribute('data-phase', 'rest-set')
-    await expect(phase).toHaveText('Set Rest')
+    await expect(phase).toHaveText('Rest between sets')
   })
 
   test('reaches DONE and offers restart', async ({ page }) => {
