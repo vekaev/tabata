@@ -20,7 +20,10 @@
           var fonts = { oswald: "'Oswald', sans-serif", bebas: "'Bebas Neue', sans-serif", mono: "'Space Mono', monospace" }
           if (f && fonts[f]) r.style.setProperty('--font-display', fonts[f])
           var lng = localStorage.getItem('lang')
-          if (lng) r.lang = lng
+          if (lng) {
+            r.lang = lng
+            if (lng === 'ar' || lng === 'fa' || lng === 'he') r.dir = 'rtl'
+          }
         } catch (e) {}
       })()
     </script>

@@ -47,7 +47,7 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative z-10 max-h-[85dvh] w-[min(380px,92vw)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-left shadow-2xl"
+        className="relative z-10 max-h-[85dvh] w-[min(380px,92vw)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-start shadow-2xl"
       >
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="font-ui text-[0.7rem] uppercase tracking-[0.2em] text-fg-tertiary">

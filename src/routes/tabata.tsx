@@ -118,7 +118,7 @@ function Field({
     <div className="flex items-center justify-between gap-3">
       <span className="min-w-0 truncate text-left font-display text-[1.05rem] uppercase tracking-[0.08em] text-fg-secondary">
         {label}
-        {unit && <span className="ml-1.5 text-fg-tertiary">{unit}</span>}
+        {unit && <span className="ms-1.5 text-fg-tertiary">{unit}</span>}
       </span>
       <div className="shrink-0">
         <NumberStepper
