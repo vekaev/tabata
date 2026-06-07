@@ -9,6 +9,7 @@ const KEYS = {
   presets: 'tabata.presets',
   settings: 'tabata.settings',
   history: 'tabata.history',
+  hidden: 'tabata.hiddenPresets',
 } as const
 
 const HISTORY_LIMIT = 8
@@ -48,6 +49,11 @@ export const loadPresets = (): TabataConfig[] =>
   read<TabataConfig[]>(KEYS.presets, []).map(normalizeConfig)
 
 export const savePresets = (presets: TabataConfig[]): void => write(KEYS.presets, presets)
+
+/** Ids of built-in presets the user has hidden ("deleted"). */
+export const loadHiddenPresets = (): string[] => read<string[]>(KEYS.hidden, [])
+
+export const saveHiddenPresets = (ids: string[]): void => write(KEYS.hidden, ids)
 
 export const loadHistory = (): TabataConfig[] =>
   read<TabataConfig[]>(KEYS.history, []).map(normalizeConfig)

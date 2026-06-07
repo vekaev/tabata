@@ -18,10 +18,12 @@ import {
 import {
   createUserPreset,
   loadConfig,
+  loadHiddenPresets,
   loadHistory,
   loadPresets,
   pushHistory,
   saveConfig,
+  saveHiddenPresets,
   savePresets,
 } from '../lib/storage'
 
@@ -70,7 +72,7 @@ function Chip({
   corner?: ReactNode
 }) {
   return (
-    <span className="relative inline-flex">
+    <span className="group relative inline-flex">
       <button
         onClick={onSelect}
         aria-pressed={selected}
@@ -99,9 +101,13 @@ function TabataConfigScreen() {
   const [naming, setNaming] = useState<TabataConfig | null>(null)
   const [draftName, setDraftName] = useState('')
   const [showNames, setShowNames] = useState(false)
+  const [hidden, setHidden] = useState<string[]>(() => loadHiddenPresets())
 
-  // Saved presets first (most relevant to the user), then the built-ins.
-  const presets = useMemo(() => [...userPresets, ...PRESETS], [userPresets])
+  // Saved presets first; then built-ins the user hasn't hidden.
+  const presets = useMemo(
+    () => [...userPresets, ...PRESETS.filter((p) => !hidden.includes(p.id))],
+    [userPresets, hidden],
+  )
   // Recent excludes anything already available as a preset, so a config never
   // shows in both Recent and Presets at once.
   const recent = useMemo(
@@ -125,9 +131,16 @@ function TabataConfigScreen() {
   const apply = (preset: TabataConfig) => setConfig({ ...preset })
 
   const deletePreset = (id: string) => {
-    const next = userPresets.filter((p) => p.id !== id)
-    setUserPresets(next)
-    savePresets(next)
+    if (id.startsWith('user-')) {
+      const next = userPresets.filter((p) => p.id !== id)
+      setUserPresets(next)
+      savePresets(next)
+    } else {
+      // Built-in: hide it (so it can be brought back later if needed).
+      const next = [...hidden, id]
+      setHidden(next)
+      saveHiddenPresets(next)
+    }
   }
 
   const beginSave = (source: TabataConfig) => {
@@ -189,37 +202,39 @@ function TabataConfigScreen() {
           </section>
         )}
 
-        <section className="flex w-full flex-col items-center gap-2">
-          <h2 className="font-ui text-[0.65rem] uppercase tracking-[0.2em] text-fg-tertiary">
-            {t('presets')}
-          </h2>
-          <div className="flex flex-wrap justify-center gap-2" aria-label={t('presets')}>
-            {presets.map((preset) => (
-              <Chip
-                key={preset.id}
-                label={
+        {presets.length > 0 && (
+          <section className="flex w-full flex-col items-center gap-2">
+            <h2 className="font-ui text-[0.65rem] uppercase tracking-[0.2em] text-fg-tertiary">
+              {t('presets')}
+            </h2>
+            <div className="flex flex-wrap justify-center gap-2" aria-label={t('presets')}>
+              {presets.map((preset) => {
+                const label =
                   'nameKey' in preset
                     ? `${t(preset.nameKey as Parameters<TFunction>[0])} ${configLabel(preset)}`
                     : preset.name
-                }
-                selected={sameConfig(config, preset)}
-                onSelect={() => apply(preset)}
-                corner={
-                  preset.id.startsWith('user-') ? (
-                    <button
-                      className="focus-ring absolute -right-[7px] -top-[7px] flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-surface text-xs leading-none text-fg-tertiary transition-colors hover:border-rest hover:text-rest"
-                      onClick={() => deletePreset(preset.id)}
-                      aria-label={`Delete ${preset.name}`}
-                      title="Delete"
-                    >
-                      ×
-                    </button>
-                  ) : undefined
-                }
-              />
-            ))}
-          </div>
-        </section>
+                return (
+                  <Chip
+                    key={preset.id}
+                    label={label}
+                    selected={sameConfig(config, preset)}
+                    onSelect={() => apply(preset)}
+                    corner={
+                      <button
+                        className="hover-reveal focus-ring absolute -right-[7px] -top-[7px] flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-surface text-xs leading-none text-fg-tertiary transition-colors hover:border-rest hover:text-rest"
+                        onClick={() => deletePreset(preset.id)}
+                        aria-label={`Delete ${label}`}
+                        title="Delete"
+                      >
+                        ×
+                      </button>
+                    }
+                  />
+                )
+              })}
+            </div>
+          </section>
+        )}
 
         <div className="grid w-full grid-cols-1 gap-x-14 gap-y-3.5 sm:grid-cols-2">
           {FIELDS.map((field) => {

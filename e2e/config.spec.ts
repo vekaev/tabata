@@ -34,7 +34,7 @@ test.describe('tabata config', () => {
 
   test('selecting a preset fills fields and highlights it', async ({ page }) => {
     await page.goto('/tabata')
-    const preset = page.getByRole('button', { name: 'Gym 40/10 × 5' })
+    const preset = page.getByRole('button', { name: 'Gym 40/10 × 5', exact: true })
     await preset.click()
     await expect(page.getByTestId('workSec')).toHaveValue('40')
     await expect(page.getByTestId('rounds')).toHaveValue('5')
@@ -43,6 +43,18 @@ test.describe('tabata config', () => {
     // Editing a field deselects it.
     await page.getByTestId('rounds').fill('6')
     await expect(preset).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  test('deleting a built-in preset hides it (and stays hidden)', async ({ page }) => {
+    await page.goto('/tabata')
+    const chip = page.getByRole('button', { name: 'Sweat 30/30 × 10', exact: true })
+    await expect(chip).toBeVisible()
+    await chip.hover()
+    await page.getByRole('button', { name: 'Delete Sweat 30/30 × 10' }).click()
+    await expect(chip).toHaveCount(0)
+
+    await page.reload()
+    await expect(page.getByRole('button', { name: 'Sweat 30/30 × 10', exact: true })).toHaveCount(0)
   })
 
   test('starting records the config in Recent history (latest first)', async ({ page }) => {

@@ -33,9 +33,28 @@ export function FitText({
     fit()
     const ro = new ResizeObserver(fit)
     ro.observe(el.parentElement ?? el)
-    // Web fonts change metrics once loaded — re-fit then.
-    void document.fonts?.ready?.then(fit)
-    return () => ro.disconnect()
+
+    // Web fonts change metrics once loaded. `fonts.ready` only resolves once, so
+    // a font chosen *later* (its woff2 downloads after first paint) wouldn't
+    // trigger a re-fit — listen for every font load, and proactively request the
+    // element's font so the load fires. Plus a couple of timed fallbacks.
+    const fonts = document.fonts
+    void fonts?.ready?.then(fit)
+    fonts?.addEventListener?.('loadingdone', fit)
+    try {
+      void fonts?.load?.(`700 100px ${getComputedStyle(el).fontFamily}`).then(fit)
+    } catch {
+      /* ignore unsupported shorthand */
+    }
+    const t1 = setTimeout(fit, 250)
+    const t2 = setTimeout(fit, 800)
+
+    return () => {
+      ro.disconnect()
+      fonts?.removeEventListener?.('loadingdone', fit)
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
     // value.length (not value) so a ticking clock doesn't re-fit every second;
     // digits are tabular so width is constant for a given length.
   }, [value.length, font, maxVh])

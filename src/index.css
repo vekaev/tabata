@@ -277,6 +277,21 @@
   }
 }
 
+/* Reveal a control on hover/focus (pointer devices only); on touch — where
+   there is no hover — it stays visible so it's always reachable. */
+.hover-reveal {
+  transition: opacity 150ms ease;
+}
+@media (hover: hover) {
+  .hover-reveal {
+    opacity: 0;
+  }
+  .group:hover .hover-reveal,
+  .group:focus-within .hover-reveal {
+    opacity: 1;
+  }
+}
+
 /* ---- Electron frameless window ---- */
 /* A thin draggable strip across the top (the OS title bar is hidden). The fixed
    corner controls sit above it at a higher z-index and stay clickable. */
