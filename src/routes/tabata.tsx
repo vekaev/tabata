@@ -228,7 +228,8 @@ function TabataConfigScreen() {
             <h2 className="font-ui text-[0.65rem] uppercase tracking-[0.2em] text-fg-tertiary">
               {t('recent')}
             </h2>
-            <div className="flex flex-wrap justify-center gap-2" aria-label={t('recent')}>
+            {/* extra top padding leaves room for the floating Save button */}
+            <div className="flex flex-wrap justify-center gap-2 pt-3" aria-label={t('recent')}>
               {recent.map((item) => (
                 <Chip
                   key={item.id}
@@ -237,12 +238,12 @@ function TabataConfigScreen() {
                   onSelect={() => apply(item)}
                   corner={
                     <button
-                      className="focus-ring absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[12px] leading-none text-white shadow-md ring-2 ring-surface transition-transform hover:scale-110"
+                      className="hover-reveal focus-ring absolute -top-3 right-0 z-10 flex h-[20px] items-center gap-1 rounded-full bg-accent px-2 text-[0.6rem] font-semibold uppercase leading-none tracking-wide text-white shadow-md ring-2 ring-surface"
                       onClick={() => beginSave(item)}
                       aria-label={`${t('save')} ${item.name}`}
                       title={t('savePreset')}
                     >
-                      ★
+                      ★ {t('save')}
                     </button>
                   }
                 />
