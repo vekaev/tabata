@@ -154,11 +154,12 @@ function TabataConfigScreen() {
     () => [...userPresets, ...PRESETS.filter((p) => !hidden.includes(p.id))],
     [userPresets, hidden],
   )
-  // Recent excludes anything already available as a preset, so a config never
-  // shows in both Recent and Presets at once.
+  // Recent shows every config you've run, except ones you've explicitly saved
+  // (those live in Presets, so they're not duplicated). Built-in presets do NOT
+  // suppress Recent — running one still counts as recent.
   const recent = useMemo(
-    () => history.filter((h) => !presets.some((p) => sameConfig(p, h))),
-    [history, presets],
+    () => history.filter((h) => !userPresets.some((p) => sameConfig(p, h))),
+    [history, userPresets],
   )
   const total = useMemo(() => totalDurationSec(config), [config])
   // Whether the current config already exists as a preset (built-in or saved).
@@ -341,8 +342,15 @@ function TabataConfigScreen() {
           )}
         </div>
 
-        <p data-testid="total" className="m-0 font-ui text-[0.85rem] uppercase tracking-[0.18em] text-fg-tertiary">
-          {t('total')} {formatClock(total)}
+        <p className="m-0 flex items-center gap-2 font-ui text-[0.85rem] uppercase tracking-[0.18em] text-fg-tertiary">
+          <span data-testid="total">
+            {t('total')} {formatClock(total)}
+          </span>
+          {!isSaved && (
+            <span className="inline-flex items-center gap-1 text-accent-strong">
+              <span aria-hidden>•</span> {t('unsaved')}
+            </span>
+          )}
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3.5">
