@@ -5,7 +5,8 @@ import { useCallback, useSyncExternalStore } from 'react'
 
 export type Lang =
   | 'en' | 'zh' | 'es' | 'hi' | 'ar' | 'pt' | 'fr' | 'de' | 'ja' | 'ko'
-  | 'it' | 'tr' | 'id' | 'vi' | 'pl' | 'nl' | 'th' | 'sv' | 'uk' | 'ru'
+  | 'it' | 'tr' | 'id' | 'vi' | 'pl' | 'nl' | 'th' | 'sv' | 'fa' | 'he'
+  | 'cs' | 'el' | 'ro' | 'uk' | 'ru'
 
 // English & the rest first; Ukrainian and Russian last (per preference).
 export const LANGS: { code: Lang; label: string }[] = [
@@ -27,12 +28,17 @@ export const LANGS: { code: Lang; label: string }[] = [
   { code: 'nl', label: 'Nederlands' },
   { code: 'th', label: 'ไทย' },
   { code: 'sv', label: 'Svenska' },
+  { code: 'fa', label: 'فارسی' },
+  { code: 'he', label: 'עברית' },
+  { code: 'cs', label: 'Čeština' },
+  { code: 'el', label: 'Ελληνικά' },
+  { code: 'ro', label: 'Română' },
   { code: 'uk', label: 'Українська' },
   { code: 'ru', label: 'Русский' },
 ]
 
 // Right-to-left languages.
-const RTL = new Set<Lang>(['ar'])
+const RTL = new Set<Lang>(['ar', 'fa', 'he'])
 export const isRTL = (lang: Lang): boolean => RTL.has(lang)
 
 type Dict = Record<string, string>
@@ -351,8 +357,81 @@ const ru: Record<Keys, string> = {
   pDouble: 'Двойная Табата',
 }
 
+const fa: Record<Keys, string> = {
+  tabata: 'Tabata', clock: 'ساعت', timer: 'تایمر', start: 'شروع', pause: 'توقف', resume: 'ادامه',
+  skip: 'رد کردن', restart: 'شروع مجدد', again: 'دوباره', edit: 'ویرایش', save: 'ذخیره', delete: 'حذف',
+  cancel: 'لغو', back: 'بازگشت', recent: 'اخیر', presets: 'پیش‌تنظیم‌ها', name: 'نام', total: 'مجموع',
+  for: 'برای', work: 'کار', rest: 'استراحت', sets: 'ست‌ها', setRest: 'استراحت بین ست‌ها', prepare: 'آماده‌سازی',
+  cooldown: 'سرد کردن', rounds: 'دورها', roundsLower: 'دور', seconds: 'ثانیه', min: 'دقیقه', sec: 'ثانیه',
+  getReady: 'آماده شوید', done: 'تمام', round: 'دور', set: 'ست', next: 'بعدی', roundNames: 'برچسب دورها',
+  advanced: 'پیشرفته', unsaved: 'ذخیره‌نشده', savePreset: 'ذخیره پیش‌تنظیم', settings: 'تنظیمات', theme: 'پوسته',
+  mode: 'حالت', accent: 'رنگ', font: 'فونت', language: 'زبان', auto: 'خودکار', light: 'روشن', dark: 'تیره',
+  custom: 'سفارشی', support: 'پشتیبانی', reportProblem: 'گزارش مشکل', fullscreen: 'تمام‌صفحه', mute: 'بی‌صدا',
+  unmute: 'صدادار', sound: 'صدا', sBeeps: 'بوق', sSoft: 'ملایم', sMarimba: 'ماریمبا', sOff: 'خاموش',
+  pClassic: 'کلاسیک', pGym: 'باشگاه', pSweat: 'عرق', pDouble: 'تاباتای دوگانه',
+}
+
+const he: Record<Keys, string> = {
+  tabata: 'Tabata', clock: 'שעון', timer: 'טיימר', start: 'התחל', pause: 'השהה', resume: 'המשך',
+  skip: 'דלג', restart: 'התחל מחדש', again: 'שוב', edit: 'ערוך', save: 'שמור', delete: 'מחק',
+  cancel: 'ביטול', back: 'חזרה', recent: 'אחרונים', presets: 'קביעות מוגדרות', name: 'שם', total: 'סך הכול',
+  for: 'עבור', work: 'עבודה', rest: 'מנוחה', sets: 'סטים', setRest: 'מנוחה בין סטים', prepare: 'הכנה',
+  cooldown: 'שחרור', rounds: 'סבבים', roundsLower: 'סבבים', seconds: 'שניות', min: 'דק׳', sec: 'שנ׳',
+  getReady: 'היכון', done: 'סיום', round: 'סבב', set: 'סט', next: 'הבא', roundNames: 'תוויות סבב',
+  advanced: 'מתקדם', unsaved: 'לא נשמר', savePreset: 'שמור קביעה', settings: 'הגדרות', theme: 'ערכת נושא',
+  mode: 'מצב', accent: 'צבע', font: 'גופן', language: 'שפה', auto: 'אוטומטי', light: 'בהיר', dark: 'כהה',
+  custom: 'מותאם', support: 'תמיכה', reportProblem: 'דווח על בעיה', fullscreen: 'מסך מלא', mute: 'השתק',
+  unmute: 'בטל השתקה', sound: 'צליל', sBeeps: 'צפצוף', sSoft: 'רך', sMarimba: 'מרימבה', sOff: 'כבוי',
+  pClassic: 'קלאסי', pGym: 'חדר כושר', pSweat: 'זיעה', pDouble: 'טבטה כפולה',
+}
+
+const cs: Record<Keys, string> = {
+  tabata: 'Tabata', clock: 'Hodiny', timer: 'Časovač', start: 'Start', pause: 'Pauza', resume: 'Pokračovat',
+  skip: 'Přeskočit', restart: 'Restart', again: 'Znovu', edit: 'Upravit', save: 'Uložit', delete: 'Smazat',
+  cancel: 'Zrušit', back: 'Zpět', recent: 'Nedávné', presets: 'Předvolby', name: 'Název', total: 'Celkem',
+  for: 'Na', work: 'Práce', rest: 'Odpočinek', sets: 'Série', setRest: 'Pauza mezi sériemi', prepare: 'Příprava',
+  cooldown: 'Zklidnění', rounds: 'Kola', roundsLower: 'kol', seconds: 'Sekundy', min: 'Min', sec: 'Sek',
+  getReady: 'Připravte se', done: 'Hotovo', round: 'Kolo', set: 'Série', next: 'Další', roundNames: 'Názvy kol',
+  advanced: 'Pokročilé', unsaved: 'Neuloženo', savePreset: 'Uložit předvolbu', settings: 'Nastavení', theme: 'Motiv',
+  mode: 'Režim', accent: 'Barva', font: 'Písmo', language: 'Jazyk', auto: 'Auto', light: 'Světlý', dark: 'Tmavý',
+  custom: 'Vlastní', support: 'Podpora', reportProblem: 'Nahlásit problém', fullscreen: 'Celá obrazovka',
+  mute: 'Ztlumit', unmute: 'Zapnout zvuk', sound: 'Zvuk', sBeeps: 'Pípání', sSoft: 'Jemný', sMarimba: 'Marimba',
+  sOff: 'Vypnuto', pClassic: 'Klasická', pGym: 'Posilovna', pSweat: 'Pot', pDouble: 'Dvojitá Tabata',
+}
+
+const el: Record<Keys, string> = {
+  tabata: 'Tabata', clock: 'Ρολόι', timer: 'Χρονόμετρο', start: 'Έναρξη', pause: 'Παύση', resume: 'Συνέχεια',
+  skip: 'Παράλειψη', restart: 'Επανεκκίνηση', again: 'Ξανά', edit: 'Επεξεργασία', save: 'Αποθήκευση',
+  delete: 'Διαγραφή', cancel: 'Ακύρωση', back: 'Πίσω', recent: 'Πρόσφατα', presets: 'Προεπιλογές',
+  name: 'Όνομα', total: 'Σύνολο', for: 'Για', work: 'Άσκηση', rest: 'Ανάπαυση', sets: 'Σετ',
+  setRest: 'Ανάπαυση μεταξύ σετ', prepare: 'Προετοιμασία', cooldown: 'Αποθεραπεία', rounds: 'Γύροι',
+  roundsLower: 'γύροι', seconds: 'Δευτερόλεπτα', min: 'Λεπτά', sec: 'Δευτ', getReady: 'Ετοιμαστείτε',
+  done: 'Έτοιμο', round: 'Γύρος', set: 'Σετ', next: 'Επόμενο', roundNames: 'Ετικέτες γύρων',
+  advanced: 'Για προχωρημένους', unsaved: 'Μη αποθηκευμένο', savePreset: 'Αποθήκευση προεπιλογής',
+  settings: 'Ρυθμίσεις', theme: 'Θέμα', mode: 'Λειτουργία', accent: 'Χρώμα', font: 'Γραμματοσειρά',
+  language: 'Γλώσσα', auto: 'Αυτόματο', light: 'Φωτεινό', dark: 'Σκούρο', custom: 'Προσαρμοσμένο',
+  support: 'Υποστήριξη', reportProblem: 'Αναφορά προβλήματος', fullscreen: 'Πλήρης οθόνη', mute: 'Σίγαση',
+  unmute: 'Κατάργηση σίγασης', sound: 'Ήχος', sBeeps: 'Μπιπ', sSoft: 'Απαλό', sMarimba: 'Μαρίμπα',
+  sOff: 'Ανενεργό', pClassic: 'Κλασικό', pGym: 'Γυμναστήριο', pSweat: 'Ιδρώτας', pDouble: 'Διπλή Tabata',
+}
+
+const ro: Record<Keys, string> = {
+  tabata: 'Tabata', clock: 'Ceas', timer: 'Cronometru', start: 'Start', pause: 'Pauză', resume: 'Reia',
+  skip: 'Sari peste', restart: 'Repornește', again: 'Din nou', edit: 'Editează', save: 'Salvează',
+  delete: 'Șterge', cancel: 'Anulează', back: 'Înapoi', recent: 'Recente', presets: 'Presetări', name: 'Nume',
+  total: 'Total', for: 'Pentru', work: 'Lucru', rest: 'Odihnă', sets: 'Seturi', setRest: 'Odihnă între seturi',
+  prepare: 'Pregătire', cooldown: 'Relaxare', rounds: 'Runde', roundsLower: 'runde', seconds: 'Secunde',
+  min: 'Min', sec: 'Sec', getReady: 'Pregătește-te', done: 'Gata', round: 'Rundă', set: 'Set', next: 'Următorul',
+  roundNames: 'Etichete runde', advanced: 'Avansat', unsaved: 'Nesalvat', savePreset: 'Salvează presetarea',
+  settings: 'Setări', theme: 'Temă', mode: 'Mod', accent: 'Culoare', font: 'Font', language: 'Limbă',
+  auto: 'Auto', light: 'Luminos', dark: 'Întunecat', custom: 'Personalizat', support: 'Suport',
+  reportProblem: 'Raportează o problemă', fullscreen: 'Ecran complet', mute: 'Mut', unmute: 'Activează sunetul',
+  sound: 'Sunet', sBeeps: 'Bipuri', sSoft: 'Blând', sMarimba: 'Marimba', sOff: 'Oprit', pClassic: 'Clasic',
+  pGym: 'Sală', pSweat: 'Transpirație', pDouble: 'Tabata dublă',
+}
+
 const DICTS: Record<Lang, Dict> = {
-  en, zh, es, hi, ar, pt, fr, de, ja, ko, it, tr, id, vi, pl, nl, th, sv, uk, ru,
+  en, zh, es, hi, ar, pt, fr, de, ja, ko, it, tr, id, vi, pl, nl, th, sv, fa, he, cs, el, ro, uk, ru,
 }
 
 const STORAGE_KEY = 'lang'
