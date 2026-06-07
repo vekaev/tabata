@@ -158,8 +158,10 @@ function Timer() {
 
       {status === 'idle' ? (
         <div className="flex flex-col items-center gap-7">
-          <div className="flex items-start gap-3">
-            <div className="flex flex-col items-center gap-2">
+          {/* items-center aligns the colon with the steppers; the Min/Sec labels
+              float underneath (absolute) so they don't affect that alignment. */}
+          <div className="flex items-center gap-3 pb-7">
+            <div className="relative flex flex-col items-center">
               <NumberStepper
                 label={t('min')}
                 testid="minutes"
@@ -169,12 +171,12 @@ function Timer() {
                 big
                 onChange={(v) => setPart(v, seconds)}
               />
-              <span className="font-display text-[0.85rem] uppercase tracking-[0.1em] text-fg-tertiary">
+              <span className="absolute inset-x-0 top-full mt-2 text-center font-display text-[0.85rem] uppercase tracking-[0.1em] text-fg-tertiary">
                 {t('min')}
               </span>
             </div>
-            <span className="pt-3 font-display text-[2.5rem] text-fg">:</span>
-            <div className="flex flex-col items-center gap-2">
+            <span className="font-display text-[2.5rem] leading-none text-fg">:</span>
+            <div className="relative flex flex-col items-center">
               <NumberStepper
                 label={t('sec')}
                 testid="seconds"
@@ -184,7 +186,7 @@ function Timer() {
                 big
                 onChange={(v) => setPart(minutes, v)}
               />
-              <span className="font-display text-[0.85rem] uppercase tracking-[0.1em] text-fg-tertiary">
+              <span className="absolute inset-x-0 top-full mt-2 text-center font-display text-[0.85rem] uppercase tracking-[0.1em] text-fg-tertiary">
                 {t('sec')}
               </span>
             </div>

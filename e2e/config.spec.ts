@@ -13,12 +13,12 @@ test.describe('tabata config', () => {
     await expect(page.getByTestId('restBetweenSetsSec')).toHaveCount(0)
   })
 
-  test('rest-between-sets only appears with multiple sets', async ({ page }) => {
+  test('Advanced reveals rest-between-sets and round labels', async ({ page }) => {
     await page.goto('/tabata')
     await expect(page.getByTestId('restBetweenSetsSec')).toHaveCount(0)
-    await page.getByRole('button', { name: 'Increase Sets' }).click()
-    await expect(page.getByTestId('sets')).toHaveValue('2')
+    await page.getByRole('button', { name: /Advanced/i }).click()
     await expect(page.getByTestId('restBetweenSetsSec')).toBeVisible()
+    await expect(page.getByPlaceholder('Round 1')).toBeVisible()
   })
 
   test('total updates live as fields change', async ({ page }) => {

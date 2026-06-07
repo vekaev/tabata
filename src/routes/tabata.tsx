@@ -44,24 +44,33 @@ type NumericKey = Exclude<keyof TabataConfig, 'id' | 'name' | 'roundNames'>
 
 // Seconds nudge by 5 (the natural HIIT granularity); counts nudge by 1.
 // Order fills the 2-column grid row by row: Rounds | Sets, Work | Rest,
-// Prepare | Cooldown. "Rest between sets" only appears when sets > 1.
-const FIELDS: {
+// Prepare | Cooldown. "Rest between sets" + round labels live under Advanced.
+type FieldDef = {
   key: NumericKey
   labelKey: Parameters<TFunction>[0]
   unitKey: Parameters<TFunction>[0] | null
   min: number
   max: number
   step: number
-  onlyMultiSet?: boolean
-}[] = [
+}
+
+const FIELDS: FieldDef[] = [
   { key: 'rounds', labelKey: 'rounds', unitKey: null, min: 1, max: 99, step: 1 },
   { key: 'sets', labelKey: 'sets', unitKey: null, min: 1, max: 99, step: 1 },
   { key: 'workSec', labelKey: 'work', unitKey: 'seconds', min: 1, max: 3600, step: 5 },
   { key: 'restSec', labelKey: 'rest', unitKey: 'seconds', min: 0, max: 3600, step: 5 },
   { key: 'prepareSec', labelKey: 'prepare', unitKey: 'seconds', min: 0, max: 60, step: 5 },
   { key: 'cooldownSec', labelKey: 'cooldown', unitKey: 'seconds', min: 0, max: 3600, step: 5 },
-  { key: 'restBetweenSetsSec', labelKey: 'setRest', unitKey: 'seconds', min: 0, max: 3600, step: 5, onlyMultiSet: true },
 ]
+
+const SET_REST_FIELD: FieldDef = {
+  key: 'restBetweenSetsSec',
+  labelKey: 'setRest',
+  unitKey: 'seconds',
+  min: 0,
+  max: 3600,
+  step: 5,
+}
 
 function Chip({
   label,
@@ -92,6 +101,40 @@ function Chip({
   )
 }
 
+function Field({
+  field,
+  value,
+  onChange,
+  t,
+}: {
+  field: FieldDef
+  value: number
+  onChange: (v: number) => void
+  t: TFunction
+}) {
+  const label = t(field.labelKey)
+  const unit = field.unitKey ? t(field.unitKey) : ''
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="min-w-0 truncate text-left font-display text-[1.05rem] uppercase tracking-[0.08em] text-fg-secondary">
+        {label}
+        {unit && <span className="ml-1.5 text-fg-tertiary">{unit}</span>}
+      </span>
+      <div className="shrink-0">
+        <NumberStepper
+          value={value}
+          onChange={onChange}
+          label={`${label} ${unit}`.trim()}
+          min={field.min}
+          max={field.max}
+          step={field.step}
+          testid={field.key}
+        />
+      </div>
+    </div>
+  )
+}
+
 function TabataConfigScreen() {
   const navigate = useNavigate()
   const { t } = useLang()
@@ -103,7 +146,7 @@ function TabataConfigScreen() {
   // The config currently being named-and-saved (inline editor), plus its draft name.
   const [naming, setNaming] = useState<TabataConfig | null>(null)
   const [draftName, setDraftName] = useState('')
-  const [showNames, setShowNames] = useState(false)
+  const [showAdvanced, setShowAdvanced] = useState(false)
   const [hidden, setHidden] = useState<string[]>(() => loadHiddenPresets())
 
   // Saved presets first; then built-ins the user hasn't hidden.
@@ -118,6 +161,8 @@ function TabataConfigScreen() {
     [history, presets],
   )
   const total = useMemo(() => totalDurationSec(config), [config])
+  // Whether the current config already exists as a preset (built-in or saved).
+  const isSaved = useMemo(() => presets.some((p) => sameConfig(p, config)), [presets, config])
 
   const setField = (key: NumericKey, value: number) => {
     setConfig((prev) => ({ ...prev, [key]: value, id: 'custom', name: 'Custom' }))
@@ -191,12 +236,12 @@ function TabataConfigScreen() {
                   onSelect={() => apply(item)}
                   corner={
                     <button
-                      className="focus-ring absolute -right-2 -top-2 flex h-[22px] items-center gap-0.5 rounded-full bg-accent px-2 text-[0.62rem] font-semibold uppercase leading-none tracking-wide text-white shadow-md ring-2 ring-surface transition-transform hover:scale-105"
+                      className="focus-ring absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[12px] leading-none text-white shadow-md ring-2 ring-surface transition-transform hover:scale-110"
                       onClick={() => beginSave(item)}
                       aria-label={`${t('save')} ${item.name}`}
                       title={t('savePreset')}
                     >
-                      ★ {t('save')}
+                      ★
                     </button>
                   }
                 />
@@ -240,60 +285,58 @@ function TabataConfigScreen() {
         )}
 
         <div className="grid w-full grid-cols-1 gap-x-14 gap-y-3.5 sm:grid-cols-2">
-          {FIELDS.map((field) => {
-            // "Rest between sets" is meaningless with a single set — hide it.
-            if (field.onlyMultiSet && config.sets <= 1) return null
-            const label = t(field.labelKey)
-            const unit = field.unitKey ? t(field.unitKey) : ''
-            return (
-              <div
-                className={`flex items-center justify-between gap-3 ${field.onlyMultiSet ? 'sm:col-span-2' : ''}`}
-                key={field.key}
-              >
-                <span className="min-w-0 truncate text-left font-display text-[1.05rem] uppercase tracking-[0.08em] text-fg-secondary">
-                  {label}
-                  {unit && <span className="ml-1.5 text-fg-tertiary">{unit}</span>}
-                </span>
-                <div className="shrink-0">
-                  <NumberStepper
-                    value={config[field.key]}
-                    onChange={(v) => setField(field.key, v)}
-                    label={`${label} ${unit}`.trim()}
-                    min={field.min}
-                    max={field.max}
-                    step={field.step}
-                    testid={field.key}
-                  />
-                </div>
-              </div>
-            )
-          })}
+          {FIELDS.map((field) => (
+            <Field
+              key={field.key}
+              field={field}
+              value={config[field.key]}
+              onChange={(v) => setField(field.key, v)}
+              t={t}
+            />
+          ))}
         </div>
 
         <div className="w-full">
           <button
-            onClick={() => setShowNames((v) => !v)}
-            aria-expanded={showNames}
+            onClick={() => setShowAdvanced((v) => !v)}
+            aria-expanded={showAdvanced}
             className="focus-ring mx-auto flex items-center gap-2 rounded-md px-3 py-1.5 font-ui text-[0.8rem] uppercase tracking-[0.12em] text-fg-tertiary transition-colors hover:text-fg"
           >
-            {t('roundNames')} <span className="text-[0.7rem]">{showNames ? '▲' : '▼'}</span>
+            {t('advanced')} <span className="text-[0.7rem]">{showAdvanced ? '▲' : '▼'}</span>
           </button>
-          {showNames && (
-            <div className="mt-3 grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
-              {Array.from({ length: config.rounds }).map((_, i) => (
-                <div className="flex items-center gap-2" key={i}>
-                  <span className="w-6 shrink-0 text-right font-display text-sm text-fg-tertiary">
-                    {i + 1}
-                  </span>
-                  <input
-                    value={config.roundNames?.[i] ?? ''}
-                    onChange={(e) => setRoundName(i, e.target.value)}
-                    placeholder={`${t('round')} ${i + 1}`}
-                    maxLength={40}
-                    className="focus-ring w-full rounded border border-border bg-transparent px-2.5 py-1.5 font-ui text-sm text-fg"
-                  />
+
+          {showAdvanced && (
+            <div className="mt-4 flex w-full flex-col gap-5">
+              {/* Rest between sets (only affects workouts with more than one set). */}
+              <Field
+                field={SET_REST_FIELD}
+                value={config.restBetweenSetsSec}
+                onChange={(v) => setField('restBetweenSetsSec', v)}
+                t={t}
+              />
+
+              {/* Per-round labels. */}
+              <div>
+                <p className="mb-2 font-ui text-[0.65rem] uppercase tracking-[0.2em] text-fg-tertiary">
+                  {t('roundNames')}
+                </p>
+                <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
+                  {Array.from({ length: config.rounds }).map((_, i) => (
+                    <div className="flex items-center gap-2" key={i}>
+                      <span className="w-6 shrink-0 text-right font-display text-sm text-fg-tertiary">
+                        {i + 1}
+                      </span>
+                      <input
+                        value={config.roundNames?.[i] ?? ''}
+                        onChange={(e) => setRoundName(i, e.target.value)}
+                        placeholder={`${t('round')} ${i + 1}`}
+                        maxLength={40}
+                        className="focus-ring w-full rounded border border-border bg-transparent px-2.5 py-1.5 font-ui text-sm text-fg"
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           )}
         </div>
@@ -302,9 +345,19 @@ function TabataConfigScreen() {
           {t('total')} {formatClock(total)}
         </p>
 
-        <button className="btn btn-solid min-w-[200px]" onClick={start}>
-          {t('start')}
-        </button>
+        <div className="flex flex-wrap items-center justify-center gap-3.5">
+          <button className="btn btn-solid min-w-[200px]" onClick={start}>
+            {t('start')}
+          </button>
+          {!isSaved && (
+            <button
+              className="btn min-w-[150px] border-accent bg-accent text-[1.1rem] text-white hover:opacity-90"
+              onClick={() => beginSave(config)}
+            >
+              ★ {t('save')}
+            </button>
+          )}
+        </div>
       </div>
 
       <Modal open={!!naming} onClose={() => setNaming(null)} title={t('savePreset')}>

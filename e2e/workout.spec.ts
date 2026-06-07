@@ -97,7 +97,7 @@ test.describe('workout timer', () => {
     await page.clock.pauseAt(new Date('2030-01-01T00:00:00'))
     await page.goto('/tabata')
 
-    await page.getByRole('button', { name: /Round labels/i }).click()
+    await page.getByRole('button', { name: /Advanced/i }).click()
     await page.getByPlaceholder('Round 1').fill('Goblet squat')
     await page.getByRole('button', { name: 'Start' }).click()
 
