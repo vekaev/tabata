@@ -29,6 +29,7 @@ const en = {
   again: 'Again',
   edit: 'Edit',
   save: 'Save',
+  delete: 'Delete',
   cancel: 'Cancel',
   back: 'Back',
   recent: 'Recent',
@@ -88,7 +89,7 @@ type Keys = keyof typeof en
 const es: Record<Keys, string> = {
   tabata: 'Tabata', clock: 'Reloj', timer: 'Temporizador', start: 'Empezar', pause: 'Pausar',
   resume: 'Reanudar', skip: 'Saltar', restart: 'Reiniciar', again: 'Otra vez', edit: 'Editar',
-  save: 'Guardar', cancel: 'Cancelar', back: 'Atrás', recent: 'Recientes', presets: 'Predefinidos',
+  save: 'Guardar', delete: 'Eliminar', cancel: 'Cancelar', back: 'Atrás', recent: 'Recientes', presets: 'Predefinidos',
   name: 'Nombre', total: 'Total', for: 'Por', work: 'Trabajo', rest: 'Descanso', sets: 'Series',
   setRest: 'Descanso entre series', prepare: 'Preparar', cooldown: 'Enfriamiento', rounds: 'Rondas',
   roundsLower: 'rondas', seconds: 'Segundos', min: 'Min', sec: 'Seg', getReady: 'Prepárate',
@@ -104,7 +105,7 @@ const es: Record<Keys, string> = {
 const fr: Record<Keys, string> = {
   tabata: 'Tabata', clock: 'Horloge', timer: 'Minuteur', start: 'Démarrer', pause: 'Pause',
   resume: 'Reprendre', skip: 'Passer', restart: 'Recommencer', again: 'Encore', edit: 'Modifier',
-  save: 'Enregistrer', cancel: 'Annuler', back: 'Retour', recent: 'Récents', presets: 'Préréglages',
+  save: 'Enregistrer', delete: 'Supprimer', cancel: 'Annuler', back: 'Retour', recent: 'Récents', presets: 'Préréglages',
   name: 'Nom', total: 'Total', for: 'Pour', work: 'Effort', rest: 'Repos', sets: 'Séries',
   setRest: 'Repos entre séries', prepare: 'Préparation', cooldown: 'Récupération', rounds: 'Rounds',
   roundsLower: 'rounds', seconds: 'Secondes', min: 'Min', sec: 'Sec', getReady: 'Prêt',
@@ -120,7 +121,7 @@ const fr: Record<Keys, string> = {
 const de: Record<Keys, string> = {
   tabata: 'Tabata', clock: 'Uhr', timer: 'Timer', start: 'Start', pause: 'Pause',
   resume: 'Weiter', skip: 'Überspringen', restart: 'Neustart', again: 'Nochmal', edit: 'Bearbeiten',
-  save: 'Speichern', cancel: 'Abbrechen', back: 'Zurück', recent: 'Zuletzt', presets: 'Vorlagen',
+  save: 'Speichern', delete: 'Löschen', cancel: 'Abbrechen', back: 'Zurück', recent: 'Zuletzt', presets: 'Vorlagen',
   name: 'Name', total: 'Gesamt', for: 'Für', work: 'Arbeit', rest: 'Pause', sets: 'Sätze',
   setRest: 'Pause zwischen Sätzen', prepare: 'Vorbereiten', cooldown: 'Abkühlung', rounds: 'Runden',
   roundsLower: 'Runden', seconds: 'Sekunden', min: 'Min', sec: 'Sek', getReady: 'Bereit',
@@ -136,7 +137,7 @@ const de: Record<Keys, string> = {
 const pt: Record<Keys, string> = {
   tabata: 'Tabata', clock: 'Relógio', timer: 'Timer', start: 'Começar', pause: 'Pausar',
   resume: 'Continuar', skip: 'Pular', restart: 'Reiniciar', again: 'De novo', edit: 'Editar',
-  save: 'Salvar', cancel: 'Cancelar', back: 'Voltar', recent: 'Recentes', presets: 'Predefinições',
+  save: 'Salvar', delete: 'Excluir', cancel: 'Cancelar', back: 'Voltar', recent: 'Recentes', presets: 'Predefinições',
   name: 'Nome', total: 'Total', for: 'Por', work: 'Trabalho', rest: 'Descanso', sets: 'Séries',
   setRest: 'Descanso entre séries', prepare: 'Preparar', cooldown: 'Desaquecimento', rounds: 'Rounds',
   roundsLower: 'rounds', seconds: 'Segundos', min: 'Min', sec: 'Seg', getReady: 'Prepare-se',
@@ -152,7 +153,7 @@ const pt: Record<Keys, string> = {
 const uk: Record<Keys, string> = {
   tabata: 'Табата', clock: 'Годинник', timer: 'Таймер', start: 'Старт', pause: 'Пауза',
   resume: 'Далі', skip: 'Пропустити', restart: 'Спочатку', again: 'Ще раз', edit: 'Змінити',
-  save: 'Зберегти', cancel: 'Скасувати', back: 'Назад', recent: 'Нещодавні', presets: 'Шаблони',
+  save: 'Зберегти', delete: 'Видалити', cancel: 'Скасувати', back: 'Назад', recent: 'Нещодавні', presets: 'Шаблони',
   name: 'Назва', total: 'Усього', for: 'На', work: 'Робота', rest: 'Відпочинок', sets: 'Сети',
   setRest: 'Пауза між сетами', prepare: 'Підготовка', cooldown: 'Заминка', rounds: 'Раунди',
   roundsLower: 'раундів', seconds: 'Секунди', min: 'Хв', sec: 'Сек', getReady: 'Приготуйся',
@@ -168,7 +169,7 @@ const uk: Record<Keys, string> = {
 const ru: Record<Keys, string> = {
   tabata: 'Табата', clock: 'Часы', timer: 'Таймер', start: 'Старт', pause: 'Пауза',
   resume: 'Продолжить', skip: 'Пропустить', restart: 'Заново', again: 'Ещё раз', edit: 'Изменить',
-  save: 'Сохранить', cancel: 'Отмена', back: 'Назад', recent: 'Недавние', presets: 'Шаблоны',
+  save: 'Сохранить', delete: 'Удалить', cancel: 'Отмена', back: 'Назад', recent: 'Недавние', presets: 'Шаблоны',
   name: 'Название', total: 'Всего', for: 'На', work: 'Работа', rest: 'Отдых', sets: 'Сеты',
   setRest: 'Отдых между сетами', prepare: 'Подготовка', cooldown: 'Заминка', rounds: 'Раунды',
   roundsLower: 'раундов', seconds: 'Секунды', min: 'Мин', sec: 'Сек', getReady: 'Приготовься',

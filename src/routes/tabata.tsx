@@ -257,7 +257,7 @@ function TabataConfigScreen() {
             <h2 className="font-ui text-[0.65rem] uppercase tracking-[0.2em] text-fg-tertiary">
               {t('presets')}
             </h2>
-            <div className="flex flex-wrap justify-center gap-2" aria-label={t('presets')}>
+            <div className="flex flex-wrap justify-center gap-2 pt-3" aria-label={t('presets')}>
               {presets.map((preset) => {
                 const label =
                   'nameKey' in preset
@@ -271,12 +271,12 @@ function TabataConfigScreen() {
                     onSelect={() => apply(preset)}
                     corner={
                       <button
-                        className="hover-reveal focus-ring absolute -right-[7px] -top-[7px] flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-surface text-xs leading-none text-fg-tertiary transition-colors hover:border-rest hover:text-rest"
+                        className="hover-reveal focus-ring absolute -top-3 right-0 z-10 flex h-[20px] items-center gap-1 rounded-full border border-border bg-surface px-2 text-[0.6rem] font-semibold uppercase leading-none tracking-wide text-fg-tertiary shadow-md ring-2 ring-surface transition-colors hover:border-rest hover:text-rest"
                         onClick={() => deletePreset(preset.id)}
-                        aria-label={`Delete ${label}`}
-                        title="Delete"
+                        aria-label={`${t('delete')} ${label}`}
+                        title={t('delete')}
                       >
-                        ×
+                        ✕ {t('delete')}
                       </button>
                     }
                   />
