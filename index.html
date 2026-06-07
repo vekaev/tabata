@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- Apply saved theme/accent before first paint to avoid a flash. -->
+    <script>
+      (function () {
+        try {
+          var r = document.documentElement
+          var t = localStorage.getItem('theme') // 'light' | 'dark' | 'auto'
+          var a = localStorage.getItem('accent') // preset name | 'custom'
+          var c = localStorage.getItem('accentCustom') // hex
+          if (t && t !== 'auto') r.dataset.theme = t
+          var presets = { blue: '#2563eb', green: '#16a34a', violet: '#7c3aed', orange: '#ea580c' }
+          if (a === 'custom' && c) r.style.setProperty('--accent', c)
+          else if (a && presets[a]) r.style.setProperty('--accent', presets[a])
+          var f = localStorage.getItem('font')
+          var fonts = { oswald: "'Oswald', sans-serif", bebas: "'Bebas Neue', sans-serif", mono: "'Space Mono', monospace" }
+          if (f && fonts[f]) r.style.setProperty('--font-display', fonts[f])
+          var lng = localStorage.getItem('lang')
+          if (lng) r.lang = lng
+        } catch (e) {}
+      })()
+    </script>
+
+    <!-- Primary SEO. Replace tabata.example with your real domain before deploy. -->
+    <title>Free Tabata Timer Online — HIIT & Interval Workout Timer</title>
+    <meta
+      name="description"
+      content="Free online Tabata timer for HIIT and interval workouts. Customizable work/rest intervals, rounds and sets, audio cues, themes and a full-screen display. No login, no download."
+    />
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="keywords" content="tabata timer, interval timer, HIIT timer, workout timer, online tabata, free tabata timer, crossfit timer, EMOM, AMRAP" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tabata Timer" />
+    <meta property="og:title" content="Free Tabata Timer Online — HIIT & Interval Workout Timer" />
+    <meta property="og:description" content="Free online Tabata/HIIT interval timer. Customizable intervals, rounds, sets, audio cues and themes. No login, no download." />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Tabata Timer showing a 20 seconds work / 10 seconds rest interval" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Free Tabata Timer Online" />
+    <meta name="twitter:description" content="Free HIIT/Tabata interval timer. Customizable intervals, audio cues and themes. No login." />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og-image.png" />
+
+    <!-- Icons / PWA -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="application-name" content="Tabata Timer" />
+    <meta name="apple-mobile-web-app-title" content="Tabata" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Structured data: a free web application. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Tabata Timer",
+        "url": "%VITE_SITE_URL%/",
+        "description": "Free online Tabata and HIIT interval timer with customizable work/rest intervals, rounds, sets, audio cues and themes. No login, no download.",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "Any (web browser)",
+        "browserRequirements": "Requires JavaScript. Works in Chrome, Safari, Firefox and Edge.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "Customizable work and rest intervals",
+          "Adjustable rounds and sets",
+          "Audio countdown cues",
+          "Light, dark and custom color themes",
+          "Full-screen display",
+          "Works on web and desktop"
+        ],
+        "isAccessibleForFree": true,
+        "inLanguage": "en"
+      }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@400;500;600&family=Oswald:wght@500;600;700&family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="max-width: 40rem; margin: 4rem auto; padding: 0 1.5rem; font-family: system-ui, sans-serif; color: #eee; background: #0a0a0a">
+        <h1>Tabata Timer — Free Online HIIT & Interval Workout Timer</h1>
+        <p>
+          Tabata Timer is a free, no-login interval timer for HIIT and CrossFit-style
+          workouts. The classic protocol is 20 seconds work / 10 seconds rest for 8
+          rounds, but you can fully customize the work and rest durations, the number of
+          rounds and sets, and the get-ready countdown. It runs full-screen with audio
+          cues and light, dark and custom color themes.
+        </p>
+        <p>This application requires JavaScript to be enabled.</p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

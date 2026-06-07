@@ -1,0 +1,18 @@
+# Tabata Timer
+
+> A free, no-login online Tabata and HIIT interval timer that runs in any web browser, with customizable work/rest intervals, rounds, sets, audio cues and color themes.
+
+Tabata Timer is a client-side web app (also available as a desktop build). The classic
+protocol is 20 seconds of work / 10 seconds of rest for 8 rounds, but every value —
+work, rest, rounds, sets, rest between sets, and the get-ready countdown — is
+configurable. It is free, requires no account or download, and includes light, dark and
+custom-color themes plus a full-screen mode for gym displays.
+
+Replace tabata.example with the real domain.
+
+## Core
+- [Tabata Timer (app)](https://tabata.example/): Launch the interval timer; configure work/rest seconds, rounds, and sets, then run it full-screen with audio cues.
+- [Clock / stopwatch](https://tabata.example/clock): A simple count-up stopwatch mode.
+
+## Optional
+- [Tabata config](https://tabata.example/tabata): Set rounds, work, rest, sets and prepare countdown, and save reusable presets.

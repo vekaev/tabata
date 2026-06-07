@@ -1,0 +1,5 @@
+# Lets electron-updater run in an unpackaged/dev build for testing.
+# Mirror your package.json build.publish config (replace the owner).
+provider: github
+owner: vekaev
+repo: tabata

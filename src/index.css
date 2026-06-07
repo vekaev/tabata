@@ -1,0 +1,305 @@
+@import 'tailwindcss';
+
+/*
+ * Theme system
+ * ------------
+ * Semantic colors are plain CSS variables that flip per theme. `@theme inline`
+ * maps them into Tailwind so utilities like `bg-bg`, `text-fg`, `border-border`,
+ * `text-accent` resolve to the *variable* (not a frozen value) and therefore
+ * react to the active theme/accent at runtime.
+ *
+ * - Mode: `data-theme` on <html> = "auto" (default, follows the OS), "dark", or
+ *   "light".
+ * - Accent: `--accent` is set on <html> (preset or a custom hex). `--accent-strong`
+ *   auto-derives from it, so switching accent only needs to set one variable.
+ */
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-tertiary: var(--fg-tertiary);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-hover: var(--hover-fill);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-work: var(--work);
+  --color-work-bright: var(--work-bright);
+  --color-rest: var(--rest);
+  --color-rest-bright: var(--rest-bright);
+
+  --font-display: 'Barlow Condensed', 'Oswald', 'Roboto Mono', ui-monospace, monospace;
+  --font-ui: 'Barlow', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Dark theme — the default canvas. */
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --fg: #ffffff;
+  --fg-secondary: rgb(255 255 255 / 0.85);
+  --fg-tertiary: rgb(255 255 255 / 0.55);
+  --border: rgb(255 255 255 / 0.18);
+  --border-strong: rgb(255 255 255 / 0.6);
+  --hover-fill: rgb(255 255 255 / 0.04);
+  /* Fixed workout semantics — green = go, red = rest — for at-a-glance clarity
+     regardless of the chosen accent. */
+  --work: #16a34a;
+  --work-bright: #22c55e;
+  --rest: #e60023;
+  --rest-bright: #ff1e2d;
+
+  /* Accent — themeable brand color (default red). Only set --accent to change
+     it; --accent-strong derives automatically. */
+  --accent: #e60023;
+  --accent-strong: color-mix(in srgb, var(--accent) 75%, white);
+
+  color-scheme: dark;
+}
+
+/* Light theme — applied when forced, or when auto + the OS prefers light. */
+[data-theme='light'] {
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --fg: #0a0a0a;
+  --fg-secondary: rgb(10 10 10 / 0.85);
+  --fg-tertiary: rgb(10 10 10 / 0.5);
+  --border: rgb(10 10 10 / 0.16);
+  --border-strong: rgb(10 10 10 / 0.55);
+  --hover-fill: rgb(10 10 10 / 0.04);
+  --work: #15803d;
+  --work-bright: #16a34a;
+  --rest: #dc2626;
+  --rest-bright: #ef4444;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --bg: #f5f5f5;
+    --surface: #ffffff;
+    --fg: #0a0a0a;
+    --fg-secondary: rgb(10 10 10 / 0.85);
+    --fg-tertiary: rgb(10 10 10 / 0.5);
+    --border: rgb(10 10 10 / 0.16);
+    --border-strong: rgb(10 10 10 / 0.55);
+    --hover-fill: rgb(10 10 10 / 0.04);
+    --work: #15803d;
+    --work-bright: #16a34a;
+    --rest: #dc2626;
+    --rest-bright: #ef4444;
+    color-scheme: light;
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    /* Stop iOS auto-inflating text in landscape. */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html,
+  body,
+  #root {
+    margin: 0;
+    height: 100%;
+    min-height: 100dvh;
+    /* Stop pull-to-refresh / rubber-banding mid-workout. */
+    overscroll-behavior: none;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-ui);
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  button {
+    font-family: inherit;
+  }
+  input {
+    font-family: inherit;
+  }
+}
+
+@layer components {
+  /* Full-viewport centered screen, safe-area aware. Scrolls (from the top, via
+     `safe center`) when content is taller than the viewport so nothing is ever
+     clipped or unreachable. */
+  .screen {
+    @apply relative flex h-[100dvh] w-screen flex-col items-center text-center;
+    justify-content: safe center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+      max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    transition: background-color 200ms ease;
+  }
+
+  /* Vertical stack of menu buttons. */
+  .btn-stack {
+    @apply flex flex-col;
+    gap: clamp(0.75rem, 3vmin, 1.25rem);
+    width: min(360px, 86vw);
+  }
+
+  /* Fixed corner control clusters, safe-area aware. */
+  .corner {
+    @apply fixed z-10 flex items-center gap-3;
+  }
+  .corner-tl {
+    top: max(16px, env(safe-area-inset-top));
+    left: max(16px, env(safe-area-inset-left));
+  }
+  .corner-tr {
+    top: max(16px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
+  }
+  .corner-br {
+    bottom: max(16px, env(safe-area-inset-bottom));
+    right: max(16px, env(safe-area-inset-right));
+  }
+  .corner-title {
+    font-family: var(--font-ui);
+    font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-secondary);
+  }
+
+  .logo {
+    @apply inline-flex items-center justify-center rounded-md;
+    height: 38px;
+    padding: 0 10px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+  }
+
+  /* Outlined menu / control button. */
+  .btn {
+    @apply inline-flex w-full items-center justify-center rounded-md border border-border
+      bg-transparent uppercase no-underline transition-colors;
+    font-family: var(--font-display);
+    letter-spacing: 0.15em;
+    padding: clamp(12px, 3vw, 18px) 24px;
+    font-size: clamp(1.15rem, 4vw, 1.6rem);
+    font-weight: 500;
+    color: var(--fg);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:hover {
+    @apply border-border-strong bg-hover;
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn-solid {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .btn-solid:hover {
+    background: var(--fg);
+    opacity: 0.9;
+  }
+  .btn-danger {
+    border-color: color-mix(in srgb, var(--rest) 50%, transparent);
+    color: var(--rest-bright);
+  }
+  .btn-danger:hover {
+    border-color: var(--rest);
+    background: color-mix(in srgb, var(--rest) 8%, transparent);
+  }
+
+  /* Circular / bare icon button. */
+  .icon-btn {
+    @apply inline-flex items-center justify-center rounded-full border border-border
+      bg-transparent text-fg-secondary transition-all;
+    width: 48px;
+    height: 48px;
+    min-width: 44px;
+    min-height: 44px;
+    opacity: 0.85;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .icon-btn:hover {
+    @apply border-border-strong bg-hover opacity-100;
+  }
+  .icon-btn:active {
+    transform: scale(0.96);
+  }
+  .icon-btn-bare {
+    border: none;
+  }
+
+  /* Big tabular countdown digits. vmin scales to the limiting axis so the
+     digits never overflow in landscape, and caps on large gym TVs. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-ui {
+    font-family: var(--font-ui);
+  }
+}
+
+/* ---- Electron frameless window ---- */
+/* A thin draggable strip across the top (the OS title bar is hidden). The fixed
+   corner controls sit above it at a higher z-index and stay clickable. */
+.drag-strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  z-index: 5;
+  -webkit-app-region: drag;
+}
+/* Keep the top-left back button clear of the macOS traffic lights. */
+html[data-electron][data-platform='darwin'] .corner-tl {
+  left: max(86px, env(safe-area-inset-left));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
