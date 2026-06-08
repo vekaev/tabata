@@ -20,11 +20,13 @@ Big countdown numbers, green **WORK** / red **REST**, audio cues, themes, and co
 
 ### ⬇️ Download
 
-[![Download for macOS](https://img.shields.io/badge/Download-macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/vekaev/tabata/releases/latest)
-[![Download for Windows](https://img.shields.io/badge/Download-Windows-0078D6?style=for-the-badge&logo=windows11&logoColor=white)](https://github.com/vekaev/tabata/releases/latest)
-[![Download for Linux](https://img.shields.io/badge/Download-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/vekaev/tabata/releases/latest)
+[![Download for macOS](https://img.shields.io/badge/Download-macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/vekaev/tabata/releases/latest/download/Tabata-mac.dmg)
+[![Download for Windows](https://img.shields.io/badge/Download-Windows-0078D6?style=for-the-badge&logo=windows11&logoColor=white)](https://github.com/vekaev/tabata/releases/latest/download/Tabata-Setup.exe)
+[![Download for Linux](https://img.shields.io/badge/Download-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/vekaev/tabata/releases/latest/download/Tabata-linux.AppImage)
 
 **[▶ Try it in the browser](https://tabata.example)** — no install needed.
+
+<sub>The buttons download directly. macOS is a **universal** build (Apple Silicon + Intel); on first launch, right-click the app → **Open** (it isn't signed with a paid Apple certificate). [All releases →](https://github.com/vekaev/tabata/releases/latest)</sub>
 
 </div>
 

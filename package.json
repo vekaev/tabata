@@ -40,20 +40,26 @@
     "mac": {
       "category": "public.app-category.healthcare-fitness",
       "target": [
-        "dmg",
-        "zip"
+        {
+          "target": "dmg",
+          "arch": "universal"
+        },
+        {
+          "target": "zip",
+          "arch": "universal"
+        }
       ],
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
+      "artifactName": "Tabata-mac.${ext}",
+      "gatekeeperAssess": false
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "artifactName": "Tabata-Setup.${ext}"
     },
     "linux": {
       "target": "AppImage",
-      "category": "Health"
+      "category": "Health",
+      "artifactName": "Tabata-linux.${ext}"
     }
   },
   "dependencies": {

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkoutRouteImport } from './routes/workout'
 import { Route as TimerRouteImport } from './routes/timer'
 import { Route as TabataRouteImport } from './routes/tabata'
+import { Route as DownloadRouteImport } from './routes/download'
 import { Route as ClockRouteImport } from './routes/clock'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -30,6 +31,11 @@ const TabataRoute = TabataRouteImport.update({
   path: '/tabata',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DownloadRoute = DownloadRouteImport.update({
+  id: '/download',
+  path: '/download',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClockRoute = ClockRouteImport.update({
   id: '/clock',
   path: '/clock',
@@ -44,6 +50,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clock': typeof ClockRoute
+  '/download': typeof DownloadRoute
   '/tabata': typeof TabataRoute
   '/timer': typeof TimerRoute
   '/workout': typeof WorkoutRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clock': typeof ClockRoute
+  '/download': typeof DownloadRoute
   '/tabata': typeof TabataRoute
   '/timer': typeof TimerRoute
   '/workout': typeof WorkoutRoute
@@ -59,21 +67,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/clock': typeof ClockRoute
+  '/download': typeof DownloadRoute
   '/tabata': typeof TabataRoute
   '/timer': typeof TimerRoute
   '/workout': typeof WorkoutRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/clock' | '/tabata' | '/timer' | '/workout'
+  fullPaths: '/' | '/clock' | '/download' | '/tabata' | '/timer' | '/workout'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/clock' | '/tabata' | '/timer' | '/workout'
-  id: '__root__' | '/' | '/clock' | '/tabata' | '/timer' | '/workout'
+  to: '/' | '/clock' | '/download' | '/tabata' | '/timer' | '/workout'
+  id:
+    | '__root__'
+    | '/'
+    | '/clock'
+    | '/download'
+    | '/tabata'
+    | '/timer'
+    | '/workout'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ClockRoute: typeof ClockRoute
+  DownloadRoute: typeof DownloadRoute
   TabataRoute: typeof TabataRoute
   TimerRoute: typeof TimerRoute
   WorkoutRoute: typeof WorkoutRoute
@@ -102,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabataRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/download': {
+      id: '/download'
+      path: '/download'
+      fullPath: '/download'
+      preLoaderRoute: typeof DownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clock': {
       id: '/clock'
       path: '/clock'
@@ -122,6 +146,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ClockRoute: ClockRoute,
+  DownloadRoute: DownloadRoute,
   TabataRoute: TabataRoute,
   TimerRoute: TimerRoute,
   WorkoutRoute: WorkoutRoute,
