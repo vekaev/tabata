@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { TopLeft, TopRight, Logo } from '../components/Chrome'
 import { useSettings } from '../lib/useSettings'
 import { useWakeLock } from '../lib/platform'
+import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { useLang } from '../lib/i18n'
 import { celebrate } from '../lib/confetti'
 import { cueFinish, cuePip, unlockAudio } from '../lib/audio'
@@ -72,6 +73,15 @@ function Timer() {
   const celebratedRef = useRef(false)
 
   useWakeLock(status === 'running')
+
+  // Live countdown in the browser tab while it runs.
+  useDocumentTitle(
+    status === 'idle'
+      ? null
+      : status === 'done'
+        ? `${t('done')} · ${t('timer')}`
+        : `${formatClock(remainingMs / 1000)} · ${t('timer')}`,
+  )
 
   // Drift-free countdown: a self-correcting interval reading an absolute
   // performance.now() deadline (same approach as the Tabata engine).

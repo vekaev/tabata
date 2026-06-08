@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { TopLeft, TopRight, Logo } from '../components/Chrome'
 import { FitText } from '../components/FitText'
+import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { useLang } from '../lib/i18n'
 
 export const Route = createFileRoute('/clock')({
@@ -27,6 +28,9 @@ function Clock() {
   const { t } = useLang()
   const navigate = useNavigate()
   const [time, setTime] = useState(currentTime)
+
+  // Mirror the wall clock in the browser tab too.
+  useDocumentTitle(`${time} · ${t('clock')}`)
 
   useEffect(() => {
     const id = setInterval(() => setTime(currentTime()), 250)

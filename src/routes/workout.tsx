@@ -4,6 +4,7 @@ import { TopLeft, TopRight, Logo } from '../components/Chrome'
 import { useTabataTimer } from '../lib/useTabataTimer'
 import { useSettings } from '../lib/useSettings'
 import { useWakeLock } from '../lib/platform'
+import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { celebrate } from '../lib/confetti'
 import { TimeText } from '../components/TimeText'
 import { useLang, type TFunction } from '../lib/i18n'
@@ -74,6 +75,13 @@ function Workout() {
         : undefined
 
   useWakeLock(status === 'running')
+
+  // Live countdown in the browser tab, e.g. "00:12 · Work".
+  useDocumentTitle(
+    status === 'done'
+      ? `${t('done')} · ${t('tabata')}`
+      : `${formatClock(remainingDisplay)} · ${phaseLabel(phase.kind, t)}`,
+  )
 
   // Auto-start on mount so arriving from the config screen begins immediately —
   // unless this mount restored a persisted run (a mid-workout reload), in which

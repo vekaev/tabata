@@ -164,8 +164,13 @@ function TabataConfigScreen() {
     [history, userPresets],
   )
   const total = useMemo(() => totalDurationSec(config), [config])
-  // Whether the current config already exists as a preset (built-in or saved).
-  const isSaved = useMemo(() => presets.some((p) => sameConfig(p, config)), [presets, config])
+  // The config is already "kept" if it's a preset (built-in or saved) OR already
+  // sitting in Recent — in any of those cases there's nothing new to save, so the
+  // Save button hides. A fresh, never-run config is the only thing worth saving.
+  const isKept = useMemo(
+    () => presets.some((p) => sameConfig(p, config)) || recent.some((r) => sameConfig(r, config)),
+    [presets, recent, config],
+  )
 
   const setField = (key: NumericKey, value: number) => {
     setConfig((prev) => ({ ...prev, [key]: value, id: 'custom', name: 'Custom' }))
@@ -357,11 +362,11 @@ function TabataConfigScreen() {
             trailing edge (absolute, out of flow) so it never nudges Start when
             it appears or disappears. */}
         <div className="relative inline-flex items-center justify-center">
-          <button className="btn btn-solid min-w-[200px]" onClick={start}>
+          <button className="btn btn-solid min-w-[150px] sm:min-w-[200px]" onClick={start}>
             {t('start')}
           </button>
           <AnimatePresence>
-            {!isSaved && (
+            {!isKept && (
               <motion.button
                 key="save"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -372,7 +377,9 @@ function TabataConfigScreen() {
                 onClick={() => beginSave(config)}
                 aria-label={t('savePreset')}
                 data-tip={t('savePreset')}
-                className="has-tip tip-top focus-ring absolute start-full ms-2.5 inline-flex h-[clamp(46px,12vw,58px)] items-center rounded-md border border-accent bg-accent px-4 font-display text-[1rem] uppercase tracking-[0.1em] text-white shadow-md transition-opacity hover:opacity-90"
+                // Same `.btn` height/type as Start (so they line up), just a
+                // narrower width via w-auto + tighter horizontal padding.
+                className="btn has-tip tip-top absolute start-full ms-2 w-auto min-w-0 border-accent bg-accent px-4 text-white hover:opacity-90 sm:ms-2.5 sm:px-5"
               >
                 {t('save')}
               </motion.button>

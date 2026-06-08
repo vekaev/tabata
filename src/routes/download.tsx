@@ -206,18 +206,41 @@ function MacOpenHelp() {
           </span>
         </li>
       </ol>
-      <p className="mt-3 text-xs text-[var(--fg-secondary)]">
-        Prefer the Terminal? Run{' '}
-        <code className="rounded bg-hover px-1 py-0.5">xattr -cr /Applications/Tabata.app</code> once.{' '}
+      <div className="mt-3 text-xs text-[var(--fg-secondary)]">
+        <p>Prefer the Terminal? Run this once:</p>
+        <div className="mt-1.5 flex items-center gap-2">
+          <code className="min-w-0 flex-1 truncate rounded bg-hover px-2 py-1.5 text-[var(--fg)]">
+            xattr -cr /Applications/Tabata.app
+          </code>
+          <CopyButton text="xattr -cr /Applications/Tabata.app" />
+        </div>
         <a
-          className="underline"
+          className="mt-2 inline-block underline"
           href="https://support.apple.com/guide/mac-help/mh40616/mac"
           target="_blank"
           rel="noreferrer"
         >
           Apple’s guide →
         </a>
-      </p>
+      </div>
     </div>
+  )
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        void navigator.clipboard?.writeText(text)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 1500)
+      }}
+      aria-label="Copy command to clipboard"
+      className="focus-ring shrink-0 rounded-md border border-border px-2.5 py-1.5 font-ui text-xs text-[var(--fg-secondary)] transition-colors hover:bg-hover hover:text-[var(--fg)]"
+    >
+      {copied ? '✓ Copied' : 'Copy'}
+    </button>
   )
 }
