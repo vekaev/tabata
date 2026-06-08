@@ -26,7 +26,7 @@ Big countdown numbers, green **WORK** / red **REST**, audio cues, themes, and co
 
 **[▶ Try it in the browser](https://tabata.example)** — no install needed.
 
-<sub>The buttons download directly. macOS is a **universal** build (Apple Silicon + Intel); on first launch, right-click the app → **Open** (it isn't signed with a paid Apple certificate). [All releases →](https://github.com/vekaev/tabata/releases/latest)</sub>
+<sub>The buttons download directly. macOS is a **universal** build (Apple Silicon + Intel). [All releases →](https://github.com/vekaev/tabata/releases/latest)</sub>
 
 </div>
 

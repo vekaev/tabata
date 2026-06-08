@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { TopLeft, TopRight, Logo } from '../components/Chrome'
+import { isElectron } from '../lib/platform'
 
 export const Route = createFileRoute('/download')({
   head: () => ({
@@ -69,21 +70,18 @@ const isDesktop = (os: OS): os is DesktopOS =>
   os === 'mac' || os === 'windows' || os === 'linux'
 
 function Download() {
-  const [os, setOs] = useState<OS>('unknown')
+  const [os] = useState<OS>(detectOS)
 
   useEffect(() => {
-    const detected = detectOS()
-    setOs(detected)
-    if (isDesktop(detected)) {
+    if (isDesktop(os) && !isElectron) {
       // Small delay so the page paints before the browser's download prompt.
-      const id = setTimeout(() => triggerDownload(PLATFORMS[detected].file), 700)
+      const id = setTimeout(() => triggerDownload(PLATFORMS[os].file), 700)
       return () => clearTimeout(id)
     }
-  }, [])
+  }, [os])
 
   const primary = isDesktop(os) ? os : null
   const others = (Object.keys(PLATFORMS) as DesktopOS[]).filter((k) => k !== primary)
-  const showMacNote = primary === 'mac' || !primary
 
   return (
     <div className="screen">
@@ -148,17 +146,6 @@ function Download() {
             </a>
           ))}
         </div>
-
-        {showMacNote && (
-          <div className="mt-1 rounded-md border border-border px-4 py-3 text-start text-xs leading-relaxed text-[var(--fg-secondary)]">
-            <strong className="text-[var(--fg)]">First time on macOS:</strong> the app isn’t signed
-            with a paid Apple certificate, so right-click (or Control-click) Tabata in Applications
-            and choose <strong>Open</strong> the first time. If macOS says it’s “damaged”, open
-            Terminal and run{' '}
-            <code className="rounded bg-hover px-1 py-0.5">xattr -cr /Applications/Tabata.app</code>{' '}
-            once.
-          </div>
-        )}
 
         <a
           className="text-sm text-[var(--fg-secondary)] underline"

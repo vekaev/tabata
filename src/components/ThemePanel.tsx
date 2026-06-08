@@ -2,14 +2,17 @@
 // support link. Opened from the gear button in the top-right.
 
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { useTheme, type ThemeMode } from '../lib/useTheme'
 import { useSettings } from '../lib/useSettings'
 import { SOUND_PACKS, previewSoundPack } from '../lib/audio'
 import { LANGS, useLang, type TFunction } from '../lib/i18n'
+import { isElectron } from '../lib/platform'
 import { Modal } from './Modal'
 import { GearIcon } from './icons'
 
 const SUPPORT_EMAIL = 'vekaev4@icloud.com'
+const RELEASES_URL = 'https://github.com/vekaev/tabata/releases/latest'
 
 export function ThemePanel() {
   const { mode, accent, customAccent, font, changeMode, changeAccent, changeFont, presets, fonts } =
@@ -17,6 +20,18 @@ export function ThemePanel() {
   const { lang, setLang, t } = useLang()
   const { settings, setPack } = useSettings()
   const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+
+  // On the web, go to the in-app download page; in the desktop app itself,
+  // open the GitHub releases in the browser (e.g. to get it on another machine).
+  const getApp = () => {
+    if (isElectron) {
+      window.open(RELEASES_URL, '_blank')
+    } else {
+      setOpen(false)
+      void navigate({ to: '/download' })
+    }
+  }
 
   const modes: { value: ThemeMode; label: string }[] = [
     { value: 'auto', label: t('auto') },
@@ -159,6 +174,13 @@ export function ThemePanel() {
         <p className={heading}>{t('support')}</p>
         <button className="btn w-full px-4 py-2.5 text-[0.95rem]" onClick={openSupport}>
           {t('reportProblem')}
+        </button>
+
+        <button
+          className="btn btn-solid mt-2 w-full px-4 py-2.5 text-[0.95rem]"
+          onClick={getApp}
+        >
+          {t('getApp')}
         </button>
       </Modal>
     </>
