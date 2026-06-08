@@ -60,7 +60,8 @@ function Workout() {
     [],
   )
 
-  const { snapshot, totalSec, sequence, start, reset, toggle, skip } = useTabataTimer(config)
+  const { snapshot, totalSec, sequence, start, reset, toggle, skip, restored } =
+    useTabataTimer(config)
   const { status, phase, phaseIndex, remainingDisplay, totalRemainingSec, phaseProgress } = snapshot
 
   // The label for the current work round, or a "Next: …" preview otherwise.
@@ -74,12 +75,12 @@ function Workout() {
 
   useWakeLock(status === 'running')
 
-  // Auto-start on mount so arriving from the config screen begins immediately.
-  // `start` is stable for a given config, so this runs once per workout (twice
-  // under StrictMode, which simply restarts cleanly from zero).
+  // Auto-start on mount so arriving from the config screen begins immediately —
+  // unless this mount restored a persisted run (a mid-workout reload), in which
+  // case the engine is already running/paused/done and must not reset.
   useEffect(() => {
-    start()
-  }, [start])
+    if (!restored) start()
+  }, [start, restored])
 
   // Confetti once, when the workout completes. A ref guard keeps it from
   // re-firing on re-render, and restart() re-arms it.

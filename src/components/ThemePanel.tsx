@@ -49,10 +49,10 @@ export function ThemePanel() {
   return (
     <>
       <button
-        className="icon-btn icon-btn-bare focus-ring"
+        className="has-tip icon-btn icon-btn-bare focus-ring"
         onClick={() => setOpen(true)}
         aria-label={t('settings')}
-        title={t('settings')}
+        data-tip={t('settings')}
       >
         <GearIcon />
       </button>

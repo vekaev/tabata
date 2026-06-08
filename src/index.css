@@ -132,6 +132,17 @@
   input {
     font-family: inherit;
   }
+
+  /* Tailwind v4's Preflight resets interactive elements to the default arrow;
+     restore the pointer so buttons/links feel clickable. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  a[href],
+  label,
+  select,
+  summary {
+    cursor: pointer;
+  }
 }
 
 @layer components {
@@ -266,6 +277,53 @@
   .focus-ring:focus-visible {
     outline: 2px solid var(--fg);
     outline-offset: 2px;
+  }
+
+  /* Lightweight CSS tooltip. Put `has-tip` + `data-tip="…"` on an element;
+     it shows on hover and keyboard focus. `tip-top` flips it above. */
+  .has-tip {
+    position: relative;
+  }
+  .has-tip::after {
+    content: attr(data-tip);
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    white-space: nowrap;
+    padding: 4px 9px;
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.28);
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: none;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 3px);
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease;
+    z-index: 50;
+  }
+  .has-tip.tip-top::after {
+    top: auto;
+    bottom: calc(100% + 8px);
+    transform: translate(-50%, -3px);
+  }
+  .has-tip:hover::after,
+  .has-tip:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  /* Coarse pointers (touch) have no hover — don't leave a tip stuck open. */
+  @media (hover: none) {
+    .has-tip::after {
+      display: none;
+    }
   }
 }
 

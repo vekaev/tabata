@@ -39,10 +39,10 @@ export function TopRight({
     <div className="corner corner-tr">
       {onToggleMuted && (
         <button
-          className="icon-btn icon-btn-bare focus-ring"
+          className="has-tip icon-btn icon-btn-bare focus-ring"
           onClick={onToggleMuted}
           aria-label={muted ? t('unmute') : t('mute')}
-          title={muted ? t('unmute') : t('mute')}
+          data-tip={muted ? t('unmute') : t('mute')}
           aria-pressed={muted}
         >
           {muted ? <SoundOffIcon /> : <SoundOnIcon />}
@@ -50,10 +50,10 @@ export function TopRight({
       )}
       <ThemePanel />
       <button
-        className="icon-btn icon-btn-bare focus-ring"
+        className="has-tip icon-btn icon-btn-bare focus-ring"
         onClick={toggle}
         aria-label={t('fullscreen')}
-        title={t('fullscreen')}
+        data-tip={t('fullscreen')}
       >
         {isFullscreen ? <CollapseIcon /> : <ExpandIcon />}
       </button>

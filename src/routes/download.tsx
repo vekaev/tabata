@@ -79,6 +79,9 @@ function Download() {
 
   const primary = isDesktop(os) ? os : null
   const others = (Object.keys(PLATFORMS) as DesktopOS[]).filter((k) => k !== primary)
+  // Mac users (or undetected visitors) get the one-time "how to open" guide,
+  // since the app isn't signed with a paid Apple certificate.
+  const showMacHelp = primary === 'mac' || !primary
 
   return (
     <div className="screen">
@@ -144,6 +147,8 @@ function Download() {
           ))}
         </div>
 
+        {showMacHelp && <MacOpenHelp />}
+
         <a
           className="text-sm text-[var(--fg-secondary)] underline"
           href={RELEASES_LATEST}
@@ -153,6 +158,66 @@ function Download() {
           All releases &amp; changelog →
         </a>
       </div>
+    </div>
+  )
+}
+
+// One-time instructions for opening an unsigned app on macOS. Shown to Mac
+// visitors so the Gatekeeper warning ("Apple could not verify…") doesn't look
+// like a dead end.
+function MacOpenHelp() {
+  return (
+    <div className="w-full rounded-xl border border-border bg-[var(--surface)] p-5 text-start">
+      <p className="font-display text-base uppercase tracking-[0.06em] text-[var(--fg)]">
+        Opening it on a Mac
+      </p>
+      <p className="mt-1 text-sm text-[var(--fg-secondary)]">
+        macOS shows an “Apple could not verify…” warning the first time, because the app
+        isn’t signed with a paid Apple certificate. It’s safe — open it once like this:
+      </p>
+      <ol className="mt-3 flex flex-col gap-2 text-sm text-[var(--fg-secondary)]">
+        <li className="flex gap-2.5">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+            1
+          </span>
+          <span>
+            Open the <strong className="text-[var(--fg)]">.dmg</strong> and drag{' '}
+            <strong className="text-[var(--fg)]">Tabata</strong> into{' '}
+            <strong className="text-[var(--fg)]">Applications</strong>.
+          </span>
+        </li>
+        <li className="flex gap-2.5">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+            2
+          </span>
+          <span>
+            Double-click Tabata. When macOS blocks it, click{' '}
+            <strong className="text-[var(--fg)]">Done</strong>.
+          </span>
+        </li>
+        <li className="flex gap-2.5">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+            3
+          </span>
+          <span>
+            Go to <strong className="text-[var(--fg)]">System Settings → Privacy &amp; Security</strong>,
+            scroll down, and click <strong className="text-[var(--fg)]">Open Anyway</strong> next to
+            Tabata — then <strong className="text-[var(--fg)]">Open</strong>. You only do this once.
+          </span>
+        </li>
+      </ol>
+      <p className="mt-3 text-xs text-[var(--fg-secondary)]">
+        Prefer the Terminal? Run{' '}
+        <code className="rounded bg-hover px-1 py-0.5">xattr -cr /Applications/Tabata.app</code> once.{' '}
+        <a
+          className="underline"
+          href="https://support.apple.com/guide/mac-help/mh40616/mac"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Apple’s guide →
+        </a>
+      </p>
     </div>
   )
 }

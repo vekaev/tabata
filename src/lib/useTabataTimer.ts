@@ -10,8 +10,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { buildSequence, type Phase, type TabataConfig } from './tabata'
 import { cueFinish, cuePip, cueRest, cueWork, unlockAudio } from './audio'
+import { clearWorkoutState, loadWorkoutState, saveWorkoutState } from './timerState'
 
 export type TimerStatus = 'idle' | 'running' | 'paused' | 'done'
+
+// A fingerprint of the phase sequence — restore persisted state only if the
+// current config still produces the exact same phases.
+const sigOf = (seq: Phase[]) => seq.map((p) => `${p.kind}${p.durationSec}`).join('|')
 
 export interface TimerView {
   phase: Phase
@@ -70,15 +75,35 @@ export function useTabataTimer(config: TabataConfig) {
     [sequence, totalSec],
   )
 
-  const [status, setStatus] = useState<TimerStatus>('idle')
+  // Restore a persisted run on first mount (a page reload mid-workout), but
+  // only if the saved phase sequence still matches this config. Remaining time
+  // is recovered from the saved wall-clock deadline. Computed once (lazy).
+  const [init] = useState(() => {
+    const saved = loadWorkoutState()
+    if (!saved || saved.sig !== sigOf(sequence)) return null
+    const remainingMs =
+      saved.status === 'paused'
+        ? (saved.pausedRemainingMs ?? 0)
+        : saved.status === 'running'
+          ? Math.max(0, (saved.deadlineEpoch ?? 0) - Date.now())
+          : 0
+    return { status: saved.status, index: saved.index, remainingMs }
+  })
+  const restored = init != null
+
+  const [status, setStatus] = useState<TimerStatus>(init?.status ?? 'idle')
   const [view, setView] = useState<TimerView>(() =>
-    makeView(0, sequence[0]?.durationSec ?? 0),
+    init
+      ? makeView(init.index, init.remainingMs / 1000)
+      : makeView(0, sequence[0]?.durationSec ?? 0),
   )
 
-  // Mutable engine state the rAF loop reads/writes between renders.
+  // Mutable engine state the loop reads/writes between renders.
   const deadlineRef = useRef(0)
-  const indexRef = useRef(0)
-  const pausedRemainingRef = useRef(0)
+  const indexRef = useRef(init?.index ?? 0)
+  const pausedRemainingRef = useRef(init?.status === 'paused' ? init.remainingMs : 0)
+  // Remaining ms to seed a restored *running* deadline when the loop spins up.
+  const restoreRemainingRef = useRef(init?.status === 'running' ? init.remainingMs : 0)
   const firedPipsRef = useRef<Set<number>>(new Set())
 
   // The running loop. A self-correcting interval (not setInterval drift, not
@@ -89,6 +114,11 @@ export function useTabataTimer(config: TabataConfig) {
   // a second-resolution display.
   useEffect(() => {
     if (status !== 'running') return
+    // Restored run: the perf-clock deadline is still 0 (start() never ran), so
+    // seed it from the remaining time we recovered from the wall clock.
+    if (deadlineRef.current === 0) {
+      deadlineRef.current = performance.now() + restoreRemainingRef.current
+    }
     const fired = firedPipsRef.current
 
     const tick = () => {
@@ -131,6 +161,28 @@ export function useTabataTimer(config: TabataConfig) {
     const id = setInterval(tick, 100)
     return () => clearInterval(id)
   }, [status, sequence, makeView])
+
+  // Persist the live run so a page reload can resume it. Runs whenever the
+  // status or the active phase changes — capturing the current phase's deadline
+  // as a wall-clock epoch (running) or its frozen remaining ms (paused).
+  useEffect(() => {
+    const sig = sigOf(sequence)
+    if (status === 'running') {
+      const deadlineEpoch = Date.now() + Math.max(0, deadlineRef.current - performance.now())
+      saveWorkoutState({ sig, status, index: indexRef.current, deadlineEpoch })
+    } else if (status === 'paused') {
+      saveWorkoutState({
+        sig,
+        status,
+        index: indexRef.current,
+        pausedRemainingMs: pausedRemainingRef.current,
+      })
+    } else if (status === 'done') {
+      saveWorkoutState({ sig, status, index: indexRef.current })
+    } else {
+      clearWorkoutState()
+    }
+  }, [status, view.phaseIndex, sequence])
 
   const start = useCallback(() => {
     unlockAudio()
@@ -201,5 +253,17 @@ export function useTabataTimer(config: TabataConfig) {
   }, [sequence, status, makeView])
 
   const snapshot: TimerSnapshot = { ...view, status }
-  return { snapshot, totalSec, sequence, start, pause, resume, reset, toggle, skip }
+  return {
+    snapshot,
+    totalSec,
+    sequence,
+    start,
+    pause,
+    resume,
+    reset,
+    toggle,
+    skip,
+    /** True when this mount resumed a persisted run (don't auto-start). */
+    restored,
+  }
 }

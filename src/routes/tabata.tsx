@@ -27,6 +27,7 @@ import {
   saveHiddenPresets,
   savePresets,
 } from '../lib/storage'
+import { clearWorkoutState } from '../lib/timerState'
 
 export const Route = createFileRoute('/tabata')({
   head: () => ({
@@ -213,6 +214,8 @@ function TabataConfigScreen() {
     const normalized = normalizeConfig(config)
     saveConfig(normalized)
     setHistory(pushHistory(normalized))
+    // Begin a fresh run — discard any persisted (reloadable) workout state.
+    clearWorkoutState()
     navigate({ to: '/workout' })
   }
 
@@ -344,29 +347,15 @@ function TabataConfigScreen() {
           )}
         </div>
 
-        <p className="m-0 flex items-center gap-2 font-ui text-[0.85rem] uppercase tracking-[0.18em] text-fg-tertiary">
+        <p className="m-0 font-ui text-[0.85rem] uppercase tracking-[0.18em] text-fg-tertiary">
           <span data-testid="total">
             {t('total')} {formatClock(total)}
           </span>
-          <AnimatePresence>
-            {!isSaved && (
-              <motion.span
-                key="unsaved"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.18 }}
-                className="inline-flex items-center gap-1 text-accent-strong"
-              >
-                <span aria-hidden>•</span> {t('unsaved')}
-              </motion.span>
-            )}
-          </AnimatePresence>
         </p>
 
-        {/* Start stays dead-centre; the small Save star floats to its trailing
-            edge (absolute, out of flow) so it never nudges Start when it
-            appears or disappears. */}
+        {/* Start stays big and dead-centre; the Save button floats off its
+            trailing edge (absolute, out of flow) so it never nudges Start when
+            it appears or disappears. */}
         <div className="relative inline-flex items-center justify-center">
           <button className="btn btn-solid min-w-[200px]" onClick={start}>
             {t('start')}
@@ -375,17 +364,17 @@ function TabataConfigScreen() {
             {!isSaved && (
               <motion.button
                 key="save"
-                initial={{ opacity: 0, scale: 0.5 }}
+                initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ type: 'spring', stiffness: 520, damping: 24 }}
-                whileTap={{ scale: 0.88 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: 'spring', stiffness: 520, damping: 26 }}
+                whileTap={{ scale: 0.94 }}
                 onClick={() => beginSave(config)}
                 aria-label={t('savePreset')}
-                title={t('savePreset')}
-                className="focus-ring absolute start-full ms-2.5 flex h-10 w-10 items-center justify-center rounded-full border border-accent bg-accent text-[1.2rem] leading-none text-white shadow-md"
+                data-tip={t('savePreset')}
+                className="has-tip tip-top focus-ring absolute start-full ms-2.5 inline-flex h-[clamp(46px,12vw,58px)] items-center rounded-md border border-accent bg-accent px-4 font-display text-[1rem] uppercase tracking-[0.1em] text-white shadow-md transition-opacity hover:opacity-90"
               >
-                ★
+                {t('save')}
               </motion.button>
             )}
           </AnimatePresence>

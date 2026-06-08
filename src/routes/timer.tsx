@@ -9,6 +9,7 @@ import { cueFinish, cuePip, unlockAudio } from '../lib/audio'
 import { formatClock } from '../lib/tabata'
 import { TimeText } from '../components/TimeText'
 import { NumberStepper } from '../components/NumberStepper'
+import { clearTimerState, loadTimerState, saveTimerState } from '../lib/timerState'
 
 export const Route = createFileRoute('/timer')({
   head: () => ({
@@ -41,12 +42,32 @@ function Timer() {
   const { settings, toggleSound } = useSettings()
   const { t } = useLang()
   const navigate = useNavigate()
-  const [totalSec, setTotalSec] = useState(loadSeconds)
-  const [status, setStatus] = useState<Status>('idle')
-  const [remainingMs, setRemainingMs] = useState(totalSec * 1000)
+  // Restore a persisted countdown on first mount (a page reload mid-run).
+  // Remaining time for a running timer is recovered from the saved wall-clock
+  // deadline; paused timers keep their frozen remaining ms.
+  const [boot] = useState(() => {
+    const saved = loadTimerState()
+    if (saved) {
+      const remainingMs =
+        saved.status === 'paused'
+          ? (saved.pausedRemainingMs ?? 0)
+          : saved.status === 'running'
+            ? Math.max(0, (saved.deadlineEpoch ?? 0) - Date.now())
+            : 0
+      return { status: saved.status as Status, totalSec: saved.totalSec, remainingMs }
+    }
+    const secs = loadSeconds()
+    return { status: 'idle' as Status, totalSec: secs, remainingMs: secs * 1000 }
+  })
+
+  const [totalSec, setTotalSec] = useState(boot.totalSec)
+  const [status, setStatus] = useState<Status>(boot.status)
+  const [remainingMs, setRemainingMs] = useState(boot.remainingMs)
 
   const deadlineRef = useRef(0)
-  const pausedRef = useRef(0)
+  const pausedRef = useRef(boot.status === 'paused' ? boot.remainingMs : 0)
+  // Remaining ms to seed a restored *running* deadline when the loop spins up.
+  const restoreRemainingRef = useRef(boot.status === 'running' ? boot.remainingMs : 0)
   const firedPips = useRef<Set<number>>(new Set())
   const celebratedRef = useRef(false)
 
@@ -56,6 +77,10 @@ function Timer() {
   // performance.now() deadline (same approach as the Tabata engine).
   useEffect(() => {
     if (status !== 'running') return
+    // Restored run: seed the perf-clock deadline from the recovered remaining.
+    if (deadlineRef.current === 0) {
+      deadlineRef.current = performance.now() + restoreRemainingRef.current
+    }
     const id = setInterval(() => {
       const remaining = deadlineRef.current - performance.now()
       const sec = remaining / 1000
@@ -82,6 +107,21 @@ function Timer() {
       celebrate()
     }
   }, [status])
+
+  // Persist the live countdown so a reload resumes it (anchored to the wall
+  // clock, since performance.now() resets on reload).
+  useEffect(() => {
+    if (status === 'running') {
+      const deadlineEpoch = Date.now() + Math.max(0, deadlineRef.current - performance.now())
+      saveTimerState({ status, totalSec, deadlineEpoch })
+    } else if (status === 'paused') {
+      saveTimerState({ status, totalSec, pausedRemainingMs: pausedRef.current })
+    } else if (status === 'done') {
+      saveTimerState({ status, totalSec })
+    } else {
+      clearTimerState()
+    }
+  }, [status, totalSec])
 
   const startFrom = useCallback((seconds: number) => {
     unlockAudio()
