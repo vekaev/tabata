@@ -38,7 +38,14 @@
     ],
     "mac": {
       "category": "public.app-category.healthcare-fitness",
-      "target": ["dmg", "zip"]
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "win": {
       "target": "nsis"
@@ -51,6 +58,7 @@
   "dependencies": {
     "@tanstack/react-router": "^1.170.15",
     "canvas-confetti": "^1.9.4",
+    "electron-context-menu": "^4.1.2",
     "electron-updater": "^6.8.9",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"

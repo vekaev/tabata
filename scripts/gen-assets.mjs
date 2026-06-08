@@ -7,6 +7,7 @@ import path from 'node:path'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PUBLIC = path.join(__dirname, '..', 'public')
+const BUILD = path.join(__dirname, '..', 'build')
 
 const ACCENT = '#e60023'
 const BG = '#0a0a0a'
@@ -59,14 +60,14 @@ const ogHtml = `
 
 const browser = await chromium.launch()
 
-async function rasterizeSvg(svg, size, file) {
+async function rasterizeSvg(svg, size, file, dir = PUBLIC) {
   const page = await browser.newPage({ viewport: { width: size, height: size } })
   await page.setContent(
     `<html><body style="margin:0">${svg.replace('width="100" height="100"', `width="${size}" height="${size}"`)}</body></html>`,
   )
-  await page.locator('svg').screenshot({ path: path.join(PUBLIC, file), omitBackground: true })
+  await page.locator('svg').screenshot({ path: path.join(dir, file), omitBackground: true })
   await page.close()
-  console.log('wrote', file)
+  console.log('wrote', path.relative(path.join(__dirname, '..'), path.join(dir, file)))
 }
 
 // PWA + Apple icons
@@ -74,6 +75,10 @@ await rasterizeSvg(iconSvg(1), 192, 'icon-192.png')
 await rasterizeSvg(iconSvg(1), 512, 'icon-512.png')
 await rasterizeSvg(iconSvg(1), 180, 'apple-touch-icon.png')
 await rasterizeSvg(iconSvg(0.66), 512, 'icon-maskable-512.png') // padded for safe zone
+
+// Desktop app icon (electron-builder reads build/icon.png → .icns/.ico). A bit
+// of padding so the clock mark isn't cropped by macOS's rounded-rect mask.
+await rasterizeSvg(iconSvg(0.82), 1024, 'icon.png', BUILD)
 
 // Open Graph image
 const og = await browser.newPage({ viewport: { width: 1200, height: 630 } })
