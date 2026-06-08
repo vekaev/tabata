@@ -4,6 +4,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 import electronUpdater from 'electron-updater'
 import contextMenu from 'electron-context-menu'
+import { GITHUB_REPO } from '../src/lib/links'
 
 const { autoUpdater } = electronUpdater
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -107,7 +108,7 @@ function buildMenu() {
       submenu: [
         {
           label: 'Tabata Timer on GitHub',
-          click: () => void shell.openExternal('https://github.com/vekaev/tabata'),
+          click: () => void shell.openExternal(GITHUB_REPO),
         },
       ],
     },

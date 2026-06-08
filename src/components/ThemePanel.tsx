@@ -8,11 +8,11 @@ import { useSettings } from '../lib/useSettings'
 import { SOUND_PACKS, previewSoundPack } from '../lib/audio'
 import { LANGS, useLang, type TFunction } from '../lib/i18n'
 import { isElectron } from '../lib/platform'
+import { RELEASES_LATEST } from '../lib/links'
 import { Modal } from './Modal'
 import { GearIcon } from './icons'
 
 const SUPPORT_EMAIL = 'vekaev4@icloud.com'
-const RELEASES_URL = 'https://github.com/vekaev/tabata/releases/latest'
 
 export function ThemePanel() {
   const { mode, accent, customAccent, font, changeMode, changeAccent, changeFont, presets, fonts } =
@@ -26,7 +26,7 @@ export function ThemePanel() {
   // open the GitHub releases in the browser (e.g. to get it on another machine).
   const getApp = () => {
     if (isElectron) {
-      window.open(RELEASES_URL, '_blank')
+      window.open(RELEASES_LATEST, '_blank')
     } else {
       setOpen(false)
       void navigate({ to: '/download' })

@@ -24,7 +24,7 @@ Big countdown numbers, green **WORK** / red **REST**, audio cues, themes, and co
 [![Download for Windows](https://img.shields.io/badge/Download-Windows-0078D6?style=for-the-badge&logo=windows11&logoColor=white)](https://github.com/vekaev/tabata/releases/latest/download/Tabata-Setup.exe)
 [![Download for Linux](https://img.shields.io/badge/Download-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/vekaev/tabata/releases/latest/download/Tabata-linux.AppImage)
 
-**[▶ Try it in the browser](https://tabata.example)** — no install needed.
+**[▶ Try it in the browser](https://tabata-vekaev.vercel.app)** — no install needed.
 
 <sub>The buttons download directly. macOS is a **universal** build (Apple Silicon + Intel). [All releases →](https://github.com/vekaev/tabata/releases/latest)</sub>
 

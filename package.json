@@ -17,7 +17,8 @@
     "release": "cross-env ELECTRON=1 vite build && electron-builder --publish always",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "gen:assets": "node scripts/gen-assets.mjs"
+    "gen:assets": "node scripts/gen-assets.mjs",
+    "prepare": "husky"
   },
   "build": {
     "appId": "com.tabata.timer",
@@ -67,6 +68,7 @@
     "canvas-confetti": "^1.9.4",
     "electron-context-menu": "^4.1.2",
     "electron-updater": "^6.8.9",
+    "motion": "^12.40.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
@@ -89,6 +91,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
     "tailwindcss": "^4.3.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",

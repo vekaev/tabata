@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { TopLeft, TopRight, Logo } from '../components/Chrome'
 import { NumberStepper } from '../components/NumberStepper'
@@ -347,25 +348,47 @@ function TabataConfigScreen() {
           <span data-testid="total">
             {t('total')} {formatClock(total)}
           </span>
-          {!isSaved && (
-            <span className="inline-flex items-center gap-1 text-accent-strong">
-              <span aria-hidden>•</span> {t('unsaved')}
-            </span>
-          )}
+          <AnimatePresence>
+            {!isSaved && (
+              <motion.span
+                key="unsaved"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="inline-flex items-center gap-1 text-accent-strong"
+              >
+                <span aria-hidden>•</span> {t('unsaved')}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-3.5">
+        {/* Start stays dead-centre; the small Save star floats to its trailing
+            edge (absolute, out of flow) so it never nudges Start when it
+            appears or disappears. */}
+        <div className="relative inline-flex items-center justify-center">
           <button className="btn btn-solid min-w-[200px]" onClick={start}>
             {t('start')}
           </button>
-          {!isSaved && (
-            <button
-              className="btn min-w-[150px] border-accent bg-accent text-[1.1rem] text-white hover:opacity-90"
-              onClick={() => beginSave(config)}
-            >
-              ★ {t('save')}
-            </button>
-          )}
+          <AnimatePresence>
+            {!isSaved && (
+              <motion.button
+                key="save"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ type: 'spring', stiffness: 520, damping: 24 }}
+                whileTap={{ scale: 0.88 }}
+                onClick={() => beginSave(config)}
+                aria-label={t('savePreset')}
+                title={t('savePreset')}
+                className="focus-ring absolute start-full ms-2.5 flex h-10 w-10 items-center justify-center rounded-full border border-accent bg-accent text-[1.2rem] leading-none text-white shadow-md"
+              >
+                ★
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

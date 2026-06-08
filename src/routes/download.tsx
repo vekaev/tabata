@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { TopLeft, TopRight, Logo } from '../components/Chrome'
 import { isElectron } from '../lib/platform'
+import { DOWNLOADS, RELEASES_LATEST, downloadUrl } from '../lib/links'
 
 export const Route = createFileRoute('/download')({
   head: () => ({
@@ -17,27 +18,23 @@ export const Route = createFileRoute('/download')({
   component: Download,
 })
 
-// Stable, version-less GitHub release URLs — they always resolve to the latest
-// release's matching asset, so these links never need updating.
-const BASE = 'https://github.com/vekaev/tabata/releases/latest/download'
-
 type DesktopOS = 'mac' | 'windows' | 'linux'
 type OS = DesktopOS | 'mobile' | 'unknown'
 
 const PLATFORMS: Record<DesktopOS, { label: string; file: string; note: string }> = {
   mac: {
     label: 'Download for macOS',
-    file: 'Tabata-mac.dmg',
+    file: DOWNLOADS.mac,
     note: 'Universal — Apple Silicon & Intel · macOS 11+',
   },
   windows: {
     label: 'Download for Windows',
-    file: 'Tabata-Setup.exe',
+    file: DOWNLOADS.windows,
     note: 'Windows 10 & 11 · 64-bit installer',
   },
   linux: {
     label: 'Download for Linux',
-    file: 'Tabata-linux.AppImage',
+    file: DOWNLOADS.linux,
     note: 'AppImage · make executable and run',
   },
 }
@@ -61,7 +58,7 @@ function triggerDownload(file: string) {
   // downloads) without ever navigating the page away — even if the URL 404s.
   const iframe = document.createElement('iframe')
   iframe.style.display = 'none'
-  iframe.src = `${BASE}/${file}`
+  iframe.src = downloadUrl(file)
   document.body.appendChild(iframe)
   setTimeout(() => iframe.remove(), 20000)
 }
@@ -106,7 +103,7 @@ function Download() {
           <div className="flex w-full flex-col items-center gap-2">
             <a
               className="btn"
-              href={`${BASE}/${PLATFORMS[primary].file}`}
+              href={downloadUrl(PLATFORMS[primary].file)}
               download
               style={{ background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }}
             >
@@ -114,7 +111,7 @@ function Download() {
             </a>
             <p className="text-sm text-[var(--fg-secondary)]">
               Your download should start automatically.{' '}
-              <a className="underline" href={`${BASE}/${PLATFORMS[primary].file}`} download>
+              <a className="underline" href={downloadUrl(PLATFORMS[primary].file)} download>
                 Click here
               </a>{' '}
               if it didn’t.
@@ -141,7 +138,7 @@ function Download() {
 
         <div className="btn-stack">
           {others.map((k) => (
-            <a key={k} className="btn" href={`${BASE}/${PLATFORMS[k].file}`} download>
+            <a key={k} className="btn" href={downloadUrl(PLATFORMS[k].file)} download>
               {PLATFORMS[k].label}
             </a>
           ))}
@@ -149,7 +146,7 @@ function Download() {
 
         <a
           className="text-sm text-[var(--fg-secondary)] underline"
-          href="https://github.com/vekaev/tabata/releases/latest"
+          href={RELEASES_LATEST}
           target="_blank"
           rel="noreferrer"
         >
