@@ -33,7 +33,8 @@
       {
         "provider": "github",
         "owner": "vekaev",
-        "repo": "tabata"
+        "repo": "tabata",
+        "releaseType": "release"
       }
     ],
     "mac": {
